@@ -3,7 +3,7 @@ package burakkuneko.datomi;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import burakkuneko.datomi.mobileData.*;
+import burakkuneko.datomi.mobiledata.*;
 import android.widget.LinearLayout;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +22,7 @@ public class ActivityOptions extends Activity {
     private SimpleDateFormat dateFormater;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private int dataFormat;
+    private DataFormat dataFormat;
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
@@ -30,7 +30,7 @@ public class ActivityOptions extends Activity {
 
         dateFormater = new SimpleDateFormat("dd MM yyyy");
         mobileDataManager = new MobileDataManager(this);
-        dataFormat = mobileDataManager.getDataFormat();
+        dataFormat = mobileDataManager.currentDataFormat();
         buttonApply = findViewById(R.id.buttonApply);
         editTextDeadline = findViewById(R.id.editTextDeadline);
 
@@ -42,9 +42,9 @@ public class ActivityOptions extends Activity {
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId){
                 
                 if (checkedId == R.id.radio_button_binary) {
-                    dataFormat = DataFormat.BINARY;
+                    dataFormat.setFormatType(DataFormat.BINARY);
                 } else {
-                    dataFormat = DataFormat.DECIMAL;
+                    dataFormat.setFormatType(DataFormat.DECIMAL);
                 }
             }
         });
@@ -81,7 +81,7 @@ public class ActivityOptions extends Activity {
         initialCalendarDate.add(Calendar.DAY_OF_MONTH, -30);
         editTextDeadline.setText(dateFormater.format(initialCalendarDate.getTime()));
 
-        if (dataFormat == DataFormat.BINARY) {
+        if (dataFormat.getFormatType() == DataFormat.BINARY) {
             radioButton = findViewById(R.id.radio_button_binary);
             radioButton.setChecked(true);
         } else {

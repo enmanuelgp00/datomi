@@ -1,4 +1,4 @@
-package burakkuneko.datomi.mobileData;
+package burakkuneko.datomi.mobiledata;
 
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
@@ -12,7 +12,7 @@ public class MobileData {
    private Calendar calendarDate;
    DataFormat dataFormater;
 
-   public MobileData(String source, Calendar calendarDate, int dataFormat) {
+   public MobileData(String source, Calendar calendarDate, DataFormat dataFormater) {
       arrSource = source.split(" ");
       credit = retreive("Saldo");
       dataBytes = (long) (retreive("GB") * Math.pow(1000, 3) + retreive("MB") * Math.pow(1000, 2));
@@ -20,10 +20,10 @@ public class MobileData {
       smsBonus = (int) retreive("SMS");
       calendarDate = Calendar.getInstance();
       this.calendarDate = calendarDate;
-      dataFormater = new DataFormat(dataFormat);
+      this.dataFormater = dataFormater;
    }
 
-   public MobileData(String source, Long dateLong, int dataFormat) {
+   public MobileData(String source, Long dateLong, DataFormat dataFormater) {
       arrSource = source.split(" ");
       credit = retreive("Saldo");
       dataBytes = (long) (retreive("GB") * Math.pow(1000, 3) + retreive("MB") * Math.pow(1000, 2));
@@ -31,10 +31,10 @@ public class MobileData {
       smsBonus = (int) retreive("SMS");
       calendarDate = Calendar.getInstance();
       this.calendarDate.setTimeInMillis(dateLong);
-      dataFormater = new DataFormat(dataFormat);
+      this.dataFormater = dataFormater;
    }
 
-   private MobileData (String format, int dataFormat) {
+   private MobileData (String format, DataFormat dataFormater) {
       String[] arr = format.split(" ");
       calendarDate = Calendar.getInstance();
       calendarDate.setTimeInMillis(Long.parseLong(arr[0]));
@@ -42,11 +42,11 @@ public class MobileData {
       dataBytes = Long.parseLong(arr[2]);
       voiceBonus = arr[3];
       smsBonus = Integer.parseInt(arr[4]);
-      dataFormater = new DataFormat(dataFormat);
+      this.dataFormater = dataFormater;
    }
 
-   public static MobileData parseStringFormat(String format, int dataFormat) {
-      return new MobileData(format, dataFormat);
+   public static MobileData parseStringFormat(String format, DataFormat dataFormater) {
+      return new MobileData(format, dataFormater);
    }      
 
    public String getStringFormat() {

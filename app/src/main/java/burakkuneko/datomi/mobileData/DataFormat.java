@@ -1,4 +1,4 @@
-package burakkuneko.datomi.mobileData;
+package burakkuneko.datomi.mobiledata;
 
 public class DataFormat {
     public final static int BINARY = 1024;
@@ -17,7 +17,7 @@ public class DataFormat {
         }
     }
 
-    String format (long bytes) {
+    public String format (long bytes) {
         double data;
         int scale;
         for (int i = 0; i < names.length; i++) {
@@ -30,6 +30,23 @@ public class DataFormat {
                 );
             }
         }
-        return "error";
+        throw new IllegalArgumentException("Error format out of range or negative data");
+    }
+
+    public int getFormatType() {
+        return formatType;
+    }
+
+    public void setFormatType(int type) {
+        switch (type) {
+            case BINARY:
+                formatType = BINARY;
+                break;
+            case DECIMAL:
+                formatType = DECIMAL;
+                break;
+            default:
+                throw new IllegalArgumentException("Wrong format type");
+        }
     }
 }
