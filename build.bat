@@ -23,7 +23,8 @@ if %ERRORLEVEL% equ 1 (
 echo Compiling to classes ...
 rem 2>&1 converts the error level in standar output
 
-javac -Xlint:-options -Xlint:unchecked -source 8 -target 8 -d %classes% -classpath %main%\java;%build%\gen -bootclasspath %android%\android.jar %main%\java\%package%\ActivityMain.java 
+rem -Xlint:unchecked 
+javac -Xlint:-options  -source 8 -target 8 -d %classes% -classpath %main%\java;%build%\gen -bootclasspath %android%\android.jar %main%\java\%package%\ActivityMain.java 
 
 if %ERRORLEVEL% equ 1 (
   goto:eof
