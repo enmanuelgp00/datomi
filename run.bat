@@ -1,1 +1,0 @@
-build.bat && install.bat
