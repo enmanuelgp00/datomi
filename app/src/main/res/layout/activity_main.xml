@@ -7,7 +7,7 @@
 
     <Button
         android:id="@+id/buttonCheck"
-        android:hint="Check"
+        android:text="Check"
         android:fontFamily="monospace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

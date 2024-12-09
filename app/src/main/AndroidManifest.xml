@@ -18,5 +18,6 @@
       </intent-filter>
     </activity>
     <activity android:name=".ActivityOptions"></activity>
+    <activity android:name=".ActivityHistory"></activity>
   </application>
 </manifest>

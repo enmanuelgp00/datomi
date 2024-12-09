@@ -23,14 +23,15 @@ public class DataFormat {
         for (int i = 0; i < names.length; i++) {
             scale = i + 1;
             data = bytes / Math.pow(formatType, scale);
-            if (data < formatType && data > 0) {
+            if (data < formatType && data >= 0) {
                 return String.format("%,.2f %s",
                     data,
                     names[scale]
                 );
             }
         }
-        throw new IllegalArgumentException("Error format out of range or negative data");
+        return "unkown";
+        //throw new IllegalArgumentException("Error format out of range or negative data");
     }
 
     public int getFormatType() {

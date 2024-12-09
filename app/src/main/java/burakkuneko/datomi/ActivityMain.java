@@ -47,20 +47,22 @@ public class ActivityMain extends Activity {
       textViewOutput = findViewById(R.id.text_view);
       textViewInfo = findViewById(R.id.textViewInfo);
       buttonCheck = findViewById(R.id.buttonCheck);
-      mobileDataManager = new MobileDataManager(ActivityMain.this);
+      
 
+      mobileDataManager = new MobileDataManager(this);
       buttonCheck.setOnClickListener(checkData());
    }
    
    @Override
    public void onResume() {
       super.onResume();
+      mobileDataManager = new MobileDataManager(this);
       display();
    }
    
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
-      getMenuInflater().inflate(R.menu.simple_menu, menu);
+      getMenuInflater().inflate(R.menu.menu_main, menu);
       return true;
    }
    @Override
@@ -70,6 +72,12 @@ public class ActivityMain extends Activity {
             startActivity(new Intent(ActivityMain.this, ActivityOptions.class));
             break;
          case R.id.menu_history:
+            startActivity(new Intent(getApplicationContext(), ActivityHistory.class));
+            break;
+         case R.id.menu_clear_today_data:
+            mobileDataManager.clearTodayData();
+            display();
+            Toast.makeText(getApplicationContext(), "Today recorded data cleaned",Toast.LENGTH_SHORT).show();
             break;
       }
       return super.onOptionsItemSelected(menuItem);
@@ -77,16 +85,17 @@ public class ActivityMain extends Activity {
    public View.OnClickListener checkData() {
       return new View.OnClickListener() {
          @Override
-         public void onClick(View view) {            
+         public void onClick(View view) {     
+            // mobileDataManager = new MobileDataManager(getApplicationContext());       
             buttonCheck.setEnabled(false);
-            buttonCheck.setHint("Loading");
+            buttonCheck.setText("Loading");
             mobileDataManager.checkMobileData( new MobileDataManager.OnReceiveMobileData() {
                @Override
                public void onReceive(MobileData mobileData, String source) {
                   Toast.makeText(ActivityMain.this, source, Toast.LENGTH_LONG).show();
                   display();
                   buttonCheck.setEnabled(true);
-                  buttonCheck.setHint("Check");
+                  buttonCheck.setText("Check");
                }
             });
          }
@@ -100,22 +109,32 @@ public class ActivityMain extends Activity {
    }
    
    void display () {
-      String log = "";
-      SimpleDateFormat simpleDateFormater = new SimpleDateFormat("EEEE dd MMMM yyyy");
-      DataFormat dataFormater = mobileDataManager.currentDataFormat();
-      responseHistory = new ArrayList <String> (mobileDataManager.getLogOfToday());
-      Collections.reverse(responseHistory);
-      for (String format : responseHistory) {
-         mobileData = MobileData.parseStringFormat(format, dataFormater);
-         log = log + mobileData.asString();
-      }   
-      textViewInfo.setText(String.format("Deadline : %s\nRemaining: %d days\nToday suggestion : %s\nToday you've used: %s",
-         simpleDateFormater.format(mobileDataManager.getDeadline().getTime()),
-         mobileDataManager.getDaysTillDeadline(),
-         dataFormater.format(mobileDataManager.todaySuggestionTillDeadline()),
-         dataFormater.format(mobileDataManager.todayDataBytesUsed())
-         )
-      );
-      textViewOutput.setText(log);
+      if (mobileDataManager.getLogOfToday().size() > 0) {
+         String log = "";
+         SimpleDateFormat simpleDateFormater = new SimpleDateFormat("EEEE dd MMMM yyyy");
+         DataFormat dataFormater = mobileDataManager.currentDataFormat();
+         responseHistory = new ArrayList <String> (mobileDataManager.getLogOfToday());
+         Collections.reverse(responseHistory);
+         for (String format : responseHistory) {
+            mobileData = MobileData.parseStringFormat(format, dataFormater);
+            log = log + mobileData.asString();
+         }
+         long suggestion = mobileDataManager.todaySuggestionTillDeadline();
+         long used = mobileDataManager.todayDataBytesUsed();
+         int percent = (int) Math.floor((double) used / suggestion * 100);
+         textViewInfo.setText(String.format("Deadline : %s\nRemaining: %d days\nToday suggestion :%10s 100\nToday you've used:%10s %3d ",
+            simpleDateFormater.format(mobileDataManager.getDeadline().getTime()),
+            mobileDataManager.getDaysTillDeadline(),
+            dataFormater.format(suggestion),
+            dataFormater.format(used),
+            percent
+            )
+         );
+         textViewOutput.setText(log);
+      } else {
+         textViewOutput.setText("No data recorded yet");
+         textViewInfo.setText("");
+      }
+
    }
 }

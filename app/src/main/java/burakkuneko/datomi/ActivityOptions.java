@@ -9,8 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RadioButton;
-import android.view.View;
 import android.widget.Toast;
+
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -50,7 +53,21 @@ public class ActivityOptions extends Activity {
         });
         buttonApply.setOnClickListener(applyChanges);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_options, menu);
+        return true;
+    }
 
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch(menuItem.getItemId()) {
+            case R.id.menu_clear_data:
+                mobileDataManager.clearAllData();
+                Toast.makeText(this, "All stored data erased", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
     private View.OnClickListener applyChanges = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -89,5 +106,6 @@ public class ActivityOptions extends Activity {
             radioButton.setChecked(true);
         }
     }
+
 
 }

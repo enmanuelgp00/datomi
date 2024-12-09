@@ -105,7 +105,7 @@ public class MobileData {
       SimpleDateFormat dateFormater = new SimpleDateFormat("dd MMMM yyyy hh:mm:ss aa");
       return 
       String.format(
-         "\nData   : %s\nCredit : $ %,.2f\nMessage: %d SMS\nVoice  : %s\nDate   : %s\n",
+         "\nData   : %13s\nCredit : $ %,.2f\nMessage: %10d SMS\nVoice  : %10s\nDate   : %s\n",
          dataFormater.format(getDataBytes()),
          getCredit(),
          getSmsBonus(),

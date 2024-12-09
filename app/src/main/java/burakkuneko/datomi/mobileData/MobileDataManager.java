@@ -33,14 +33,17 @@ public class MobileDataManager {
         book = context.getSharedPreferences("book", Context.MODE_PRIVATE);
         pen = book.edit();
 
-        logOfKeys = new TreeSet<String>(book.getStringSet("logOfKeys", new TreeSet<String>()));
+        logOfKeys = getLogOfKeys(); 
 
-        logOfToday = new TreeSet<String>(book.getStringSet(getKeyOfToday(), new TreeSet<String>()));
+        logOfToday = getLogOfToday(); 
         todayFirstMobileData = getTodayFirstMobileData();
 
-        deadline = Calendar.getInstance();
+        deadline = getDeadline();
         if (logOfToday.size() > 0) {
             previousMobileData = MobileData.parseStringFormat(logOfToday.last(), currentDataFormat());
+        } else if (logOfKeys.size() > 0) {
+            String yesterdayLast = new TreeSet<String>(book.getStringSet(logOfKeys.last(), null)).last();
+            previousMobileData = MobileData.parseStringFormat(yesterdayLast, currentDataFormat());
         } else {
             previousMobileData = new MobileData("", 0L, currentDataFormat());
         }
@@ -75,10 +78,11 @@ public class MobileDataManager {
     }
 
     public TreeSet<String> getLogOfToday() {
-        return logOfToday;
+        return new TreeSet<String>(book.getStringSet(getKeyOfToday(), new TreeSet<String>()));
     }
 
     public Calendar getDeadline() {
+        Calendar deadline = Calendar.getInstance();
         deadline.setTimeInMillis(book.getLong("deadline", 0));
         return deadline;
     }
@@ -131,8 +135,8 @@ public class MobileDataManager {
         return simpleDateFormat.format(currentDate.getTime());
     }
 
-    public TreeSet<String> getLogKeys() {
-        return logOfKeys;
+    public TreeSet<String> getLogOfKeys() {
+        return new TreeSet<String>(book.getStringSet("logOfKeys", new TreeSet<String>()));
     }
 
     public long todaySuggestionTillDeadline() {
@@ -141,5 +145,18 @@ public class MobileDataManager {
     
     public long todayDataBytesUsed() {
         return todayFirstMobileData.getDataBytes() - previousMobileData.getDataBytes();
+    }
+
+    public void clearAllData() {
+        pen.clear();
+        pen.commit();
+    }
+    public void clearTodayData() {
+        String todaysKey = getKeyOfToday();
+        logOfToday = new TreeSet<String>();
+        pen.putStringSet(todaysKey, logOfToday);
+        logOfKeys.remove(todaysKey);
+        pen.putStringSet("logOfKeys", logOfKeys);
+        pen.commit();
     }
 }
