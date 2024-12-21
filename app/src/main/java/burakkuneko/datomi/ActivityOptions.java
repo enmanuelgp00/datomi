@@ -22,7 +22,7 @@ public class ActivityOptions extends Activity {
     private EditText editTextDeadline; 
     private Button buttonApply;
     private MobileDataManager mobileDataManager;
-    private SimpleDateFormat dateFormater;
+    private SimpleDateFormat dateFormatter;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private DataFormat dataFormat;
@@ -31,7 +31,7 @@ public class ActivityOptions extends Activity {
         super.onCreate(savedState);
         setContentView(R.layout.activity_options);
 
-        dateFormater = new SimpleDateFormat("dd MM yyyy");
+        dateFormatter = new SimpleDateFormat("dd MM yyyy");
         mobileDataManager = new MobileDataManager(this);
         dataFormat = mobileDataManager.currentDataFormat();
         buttonApply = findViewById(R.id.buttonApply);
@@ -80,7 +80,7 @@ public class ActivityOptions extends Activity {
         try {
                 Calendar calendarDate = Calendar.getInstance();
                 SimpleDateFormat verbose = new SimpleDateFormat("EEEE dd MMMM yyyy");
-                calendarDate.setTime(dateFormater.parse(editTextDeadline.getText().toString()));
+                calendarDate.setTime(dateFormatter.parse(editTextDeadline.getText().toString()));
                 calendarDate.add(Calendar.DAY_OF_MONTH, 30);
                 mobileDataManager.setDeadline(calendarDate);
                 Toast.makeText(ActivityOptions.this, verbose.format(calendarDate.getTime()), Toast.LENGTH_SHORT).show();
@@ -96,7 +96,7 @@ public class ActivityOptions extends Activity {
         Calendar initialCalendarDate = Calendar.getInstance();
         initialCalendarDate = mobileDataManager.getDeadline();
         initialCalendarDate.add(Calendar.DAY_OF_MONTH, -30);
-        editTextDeadline.setText(dateFormater.format(initialCalendarDate.getTime()));
+        editTextDeadline.setText(dateFormatter.format(initialCalendarDate.getTime()));
 
         if (dataFormat.getFormatType() == DataFormat.BINARY) {
             radioButton = findViewById(R.id.radio_button_binary);

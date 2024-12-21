@@ -10,9 +10,9 @@ public class MobileData {
    private long dataBytes;
    private double credit;
    private Calendar calendarDate;
-   DataFormat dataFormater;
+   DataFormat dataFormatter;
 
-   public MobileData(String source, Calendar calendarDate, DataFormat dataFormater) {
+   public MobileData(String source, Calendar calendarDate, DataFormat dataFormatter) {
       arrSource = source.split(" ");
       credit = retreive("Saldo");
       dataBytes = (long) (retreive("GB") * Math.pow(1000, 3) + retreive("MB") * Math.pow(1000, 2));
@@ -20,10 +20,10 @@ public class MobileData {
       smsBonus = (int) retreive("SMS");
       calendarDate = Calendar.getInstance();
       this.calendarDate = calendarDate;
-      this.dataFormater = dataFormater;
+      this.dataFormatter = dataFormatter;
    }
 
-   public MobileData(String source, Long dateLong, DataFormat dataFormater) {
+   public MobileData(String source, Long dateLong, DataFormat dataFormatter) {
       arrSource = source.split(" ");
       credit = retreive("Saldo");
       dataBytes = (long) (retreive("GB") * Math.pow(1000, 3) + retreive("MB") * Math.pow(1000, 2));
@@ -31,10 +31,10 @@ public class MobileData {
       smsBonus = (int) retreive("SMS");
       calendarDate = Calendar.getInstance();
       this.calendarDate.setTimeInMillis(dateLong);
-      this.dataFormater = dataFormater;
+      this.dataFormatter = dataFormatter;
    }
 
-   private MobileData (String format, DataFormat dataFormater) {
+   private MobileData (String format, DataFormat dataFormatter) {
       String[] arr = format.split(" ");
       calendarDate = Calendar.getInstance();
       calendarDate.setTimeInMillis(Long.parseLong(arr[0]));
@@ -42,11 +42,11 @@ public class MobileData {
       dataBytes = Long.parseLong(arr[2]);
       voiceBonus = arr[3];
       smsBonus = Integer.parseInt(arr[4]);
-      this.dataFormater = dataFormater;
+      this.dataFormatter = dataFormatter;
    }
 
-   public static MobileData parseStringFormat(String format, DataFormat dataFormater) {
-      return new MobileData(format, dataFormater);
+   public static MobileData parseStringFormat(String format, DataFormat dataFormatter) {
+      return new MobileData(format, dataFormatter);
    }      
 
    public String getStringFormat() {
@@ -102,15 +102,15 @@ public class MobileData {
    }
 
    public String asString() {
-      SimpleDateFormat dateFormater = new SimpleDateFormat("dd MMMM yyyy hh:mm:ss aa");
+      SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy hh:mm:ss aa");
       return 
       String.format(
          "\nData   : %13s\nCredit : $ %,.2f\nMessage: %10d SMS\nVoice  : %10s\nDate   : %s\n",
-         dataFormater.format(getDataBytes()),
+         dataFormatter.format(getDataBytes()),
          getCredit(),
          getSmsBonus(),
          getVoiceBonus(),
-         dateFormater.format(getCalendarDate().getTime())
+         dateFormatter.format(getCalendarDate().getTime())
      );
    }
 
