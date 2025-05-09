@@ -135,16 +135,16 @@ public class ActivityMain extends Activity {
          requestPermissions(new String[] {Manifest.permission.CALL_PHONE}, 1);
       };
    }
-   
+
    void display () {
       if (mobileDataManager.getLogOfToday().size() > 0) {
          StringBuilder log = new StringBuilder();
          SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM yyyy");
          DataFormat dataFormatter = mobileDataManager.currentDataFormat();
-         ArrayList<String> logOfToday = new ArrayList<String> (mobileDataManager.getLogOfToday());
-         Collections.reverse(logOfToday);
-         for (String format : logOfToday) {
-            log.append(MobileData.parseStringFormat(format, dataFormatter).asString());            
+         ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
+         Collections.reverse(logGlobal);
+         for (String format : logGlobal) {
+            log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
          }
 
          long suggestion = mobileDataManager.todaySuggestionTillDeadline();

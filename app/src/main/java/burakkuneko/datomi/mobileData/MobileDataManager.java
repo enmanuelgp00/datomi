@@ -23,7 +23,7 @@ public class MobileDataManager {
     TelephonyManager telephonyManager;
     TreeSet<String> responseHistory;
     Calendar deadline;
-    MobileData previousMobileData, todayFirstMobileData;
+    MobileData previousMobileData, todayFirstMobileData, currentMobileData;
     TreeSet<String> logOfKeys, logOfToday;
     String keyLogOfToday;
 
@@ -37,7 +37,7 @@ public class MobileDataManager {
 
         logOfToday = getLogOfToday(); 
         todayFirstMobileData = getTodayFirstMobileData();
-
+		currentMobileData = todayFirstMobileData;
         deadline = getDeadline();
         if (logOfToday.size() > 0) {
             previousMobileData = MobileData.parseStringFormat(logOfToday.last(), currentDataFormat());
@@ -58,8 +58,8 @@ public class MobileDataManager {
             @Override
             public void onReceiveUssdResponse(TelephonyManager telephonyManager, String request, CharSequence res) {
                 String keyOfToday = getKeyOfToday();
-                
-                MobileData currentMobileData = new MobileData(res.toString(), System.currentTimeMillis(), currentDataFormat());
+
+                currentMobileData = new MobileData(res.toString(), System.currentTimeMillis(), currentDataFormat());
                 store(logOfToday, keyOfToday, currentMobileData.getStringFormat());
                 if (!logOfKeys.contains(keyOfToday)) {
                     store(logOfKeys, "logOfKeys", getKeyOfToday());
@@ -79,6 +79,15 @@ public class MobileDataManager {
 
     public TreeSet<String> getLogOfToday() {
         return new TreeSet<String>(book.getStringSet(getKeyOfToday(), new TreeSet<String>()));
+    }
+    public TreeSet<String> getLogGlobal() {
+		TreeSet<String> logGlobal = new TreeSet<String>();
+		for (String key : getLogOfKeys()) {
+			for (String log : book.getStringSet(key, new TreeSet<String>())) {
+				logGlobal.add(log);
+			}
+		}
+		return logGlobal;
     }
 
     public Calendar getDeadline() {
@@ -116,7 +125,6 @@ public class MobileDataManager {
     }
 
     public void setDataFormat(DataFormat dataFormat) {
-        
         pen.putInt("data_format", dataFormat.getFormatType());
         pen.apply();
     }
@@ -142,7 +150,14 @@ public class MobileDataManager {
     public long todaySuggestionTillDeadline() {
         return todayFirstMobileData.getDataBytes() / getDaysTillDeadline() + 1;
     }
-    
+    public MobileData todayLargerMobileData() {
+		if (currentMobileData.getDataBytes() > todayFirstMobileData.getDataBytes()) {
+			return currentMobileData;
+		} else {
+			return todayFirstMobileData;
+		}
+    }
+
     public long todayDataBytesUsed() {
         return todayFirstMobileData.getDataBytes() - previousMobileData.getDataBytes();
     }

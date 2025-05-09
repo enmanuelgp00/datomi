@@ -1,58 +1,61 @@
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/main"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#000000"
+	android:orientation="vertical">
+	
+	<Button
+		android:id="@+id/buttonCheck"
+		android:text="Check"
+		android:fontFamily="monospace"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="50dp" />
 
-    <Button
-        android:id="@+id/buttonCheck"
-        android:text="Check"
-        android:fontFamily="monospace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="50dp"
-        android:layout_marginRight="50dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="10sp"
-            android:gravity="center">
-            <TextView
-                android:id="@+id/textViewInfo"
-                android:textSize="15sp"
-                android:textColor="#ff5555"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:fontFamily="monospace" />
-        </LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:layout_margin="10sp"
+			android:gravity="center">
 
-                <TextView
-                    android:id="@+id/text_view"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:fontFamily="monospace" />
-            </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+			<TextView
+				android:id="@+id/textViewInfo"
+				android:textSize="15sp"
+				android:textColor="#ff5555"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="left"
+				android:fontFamily="monospace" />
 
+		</LinearLayout>
 
+		<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center">
+
+				<TextView
+					android:id="@+id/text_view"
+					android:textSize="15sp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:gravity="left"
+					android:fontFamily="monospace" />
+			</LinearLayout>
+		</ScrollView>
+	</LinearLayout>
 </RelativeLayout>

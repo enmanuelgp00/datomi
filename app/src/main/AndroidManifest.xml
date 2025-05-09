@@ -19,5 +19,6 @@
     </activity>
     <activity android:name=".ActivityOptions"></activity>
     <activity android:name=".ActivityHistory"></activity>
+    <service android:name=".ServiceMain"></service>
   </application>
 </manifest>

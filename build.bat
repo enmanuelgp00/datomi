@@ -6,8 +6,8 @@ set "build=app\build"
 set "main=app\src\main"
 set "classes=%build%\bin\java\classes"
 
-set build-tool=D:\users\enmanuel\.software\profession\dev\sdk\android\build-tools\30.0.0
-set android=D:\users\enmanuel\.software\profession\dev\sdk\android\platforms\android-30
+set build-tool=D:\user\enmanuel\document\software\profession\dev\sdk\android\build-tools\30.0.0
+set android=D:\user\enmanuel\document\software\profession\dev\sdk\android\platforms\android-30
 set root=%~dp0
 
 call :getAppNameFromFolder appName
@@ -26,13 +26,16 @@ rem 2>&1 converts the error level in standar output
 rem -Xlint:unchecked 
 rem  -Xlint:deprecation
 javac -Xlint:-options -Xlint:deprecation -source 8 -target 8 -d %classes% -classpath %main%\java;%build%\gen -bootclasspath %android%\android.jar %main%\java\%package%\ActivityMain.java 
-
+echo done
 if %ERRORLEVEL% equ 1 (
   goto:eof
 )
 
+echo aapt 
 call "%build-tool%\dx.bat" --dex --output %build%\bin %classes%
+echo a
 %build-tool%\aapt package -f -m -F %build%\bin\unaligned.apk -M %main%\AndroidManifest.xml -S %main%\res -I %android%\android.jar 
+echo done
 
 cd %build%\bin
 %build-tool%\aapt add "unaligned.apk" classes.dex 1> nul
@@ -40,7 +43,7 @@ cd %build%\bin
 call %build-tool%\apksigner sign --ks "keystore\demo.keystore" -v1-signing-enabled true -v2-signing-enabled true --ks-pass pass:password --out "%appName%.apk" "aligned.apk" 
 
 cd %root%
-echo Success
+
 goto:exit
 
 :settingUp
