@@ -137,27 +137,16 @@ public class ActivityMain extends Activity {
    }
 
    void display () {
-<<<<<<< HEAD
-		final int BAR_SIZE = 32 ;
-		if (mobileDataManager.getLogOfToday().size() > 0) {
-			StringBuilder log = new StringBuilder();
-			SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM");
-			DataFormat dataFormatter = mobileDataManager.currentDataFormat();
-			ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
-			Collections.reverse(logGlobal);
+	final int BAR_SIZE = 32 ;
+	if (mobileDataManager.getLogOfToday().size() > 0) {
+		StringBuilder log = new StringBuilder();
+		SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM");
+		DataFormat dataFormatter = mobileDataManager.currentDataFormat();
+		ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
+		Collections.reverse(logGlobal);
 			
          for (String format : logGlobal) {
 			log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
-=======
-      if (mobileDataManager.getLogOfToday().size() > 0) {
-         StringBuilder log = new StringBuilder();
-         SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM yyyy");
-         DataFormat dataFormatter = mobileDataManager.currentDataFormat();
-         ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
-         Collections.reverse(logGlobal);
-         for (String format : logGlobal) {
-            log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
->>>>>>> refs/remotes/origin/main
          }
 
 		long suggestion = mobileDataManager.todaySuggestionTillDeadline();

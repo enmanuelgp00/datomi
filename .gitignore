@@ -1,9 +1,4 @@
-
-
-
-
-
-app/build/bin/
+app/build/
 *.apk
 *.apk.idsig
 *.dex
