@@ -1,4 +1,8 @@
-# APK and build artifacts
+
+
+
+
+
 app/build/bin/
 *.apk
 *.apk.idsig
