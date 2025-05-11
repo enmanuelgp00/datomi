@@ -1,0 +1,16 @@
+<resources>
+	<color name="white">#ffffff</color>
+	<color name="blood">#ff5555</color>
+	<color name="black">#000000</color>
+	<color name="primary">#222222</color>
+	<color name="background">#414141</color>
+
+	<style name="common_text">
+		<item name="android:textSize">15sp</item>
+		<item name="android:textColor">@color/white</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:gravity">left</item>
+		<item name="android:fontFamily">monospace</item>
+	</style>
+</resources>

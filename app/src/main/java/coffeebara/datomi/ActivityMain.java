@@ -49,9 +49,9 @@ public class ActivityMain extends Activity {
       setContentView(R.layout.activity_main);      
       handlePermissions();
 
-      textViewOutput = findViewById(R.id.text_view);
-      textViewInfo = findViewById(R.id.textViewInfo);
-      buttonCheck = findViewById(R.id.buttonCheck);
+      textViewOutput = findViewById(R.id.tv_log);
+      textViewInfo = findViewById(R.id.tv_info);
+      buttonCheck = findViewById(R.id.btn_check);
       
 
       mobileDataManager = new MobileDataManager(this);
