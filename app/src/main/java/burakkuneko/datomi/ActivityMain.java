@@ -135,33 +135,65 @@ public class ActivityMain extends Activity {
          requestPermissions(new String[] {Manifest.permission.CALL_PHONE}, 1);
       };
    }
-   
+
    void display () {
-      if (mobileDataManager.getLogOfToday().size() > 0) {
-         StringBuilder log = new StringBuilder();
-         SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM yyyy");
-         DataFormat dataFormatter = mobileDataManager.currentDataFormat();
-         ArrayList<String> logOfToday = new ArrayList<String> (mobileDataManager.getLogOfToday());
-         Collections.reverse(logOfToday);
-         for (String format : logOfToday) {
-            log.append(MobileData.parseStringFormat(format, dataFormatter).asString());            
+		final int BAR_SIZE = 32 ;
+		if (mobileDataManager.getLogOfToday().size() > 0) {
+			StringBuilder log = new StringBuilder();
+			SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM");
+			DataFormat dataFormatter = mobileDataManager.currentDataFormat();
+			ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
+			Collections.reverse(logGlobal);
+			
+         for (String format : logGlobal) {
+			log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
          }
 
-         long suggestion = mobileDataManager.todaySuggestionTillDeadline();
-         long used = mobileDataManager.todayDataBytesUsed();
-         int percent = (int) Math.floor((double) used / suggestion * 100);
-         textViewInfo.setText(String.format("Deadline : %s\nDays remaining   :%7d\nToday suggestion :%10s 100\nToday you've used:%10s %3d ",
-            simpleDateFormatter.format(mobileDataManager.getDeadline().getTime()),
-            mobileDataManager.getDaysTillDeadline(),
-            dataFormatter.format(suggestion),
-            dataFormatter.format(used),
-            percent
-            )
+		long suggestion = mobileDataManager.todaySuggestionTillDeadline();
+		long used = mobileDataManager.todayDataBytesUsed();
+		int barProgress = (int) ( (double) used / suggestion * BAR_SIZE );
+		
+		textViewInfo.setText(String.format("[ %d day(s) ] - %s - \n\n  %-" + ( BAR_SIZE / 2 ) + "s%" + ( BAR_SIZE / 2 ) + "s \n%s",
+			mobileDataManager.getDaysTillDeadline(),
+			simpleDateFormatter.format(mobileDataManager.getDeadline().getTime()),
+			dataFormatter.format( used ),
+			dataFormatter.format( suggestion ),
+            retroBar( BAR_SIZE , barProgress ))
          );
-         textViewOutput.setText(log.toString());
+		textViewOutput.setText(log.toString());
       } else {
-         textViewOutput.setText("No data recorded yet");
-         textViewInfo.setText("");
+		textViewOutput.setText("No data recorded yet");
+		textViewInfo.setText("");
       }
    }
+
+	String retroBar ( int length, int progress ) {
+		StringBuilder bar = new StringBuilder();
+		
+		String errorMessage = " ( Overpassed ) ";
+		char progressChar = '/' ;
+		char freeSpaceChar = '.' ;
+		int freeSpace = length - progress ;
+		bar.append("[ ");
+
+		if ( progress > length ) {		
+			int spaceAside = ( length - errorMessage.length() ) / 2 ;
+			StringBuilder aside = new StringBuilder();
+			for (int i = 0; i < spaceAside; i++ ) {
+				aside.append( progressChar );
+			}
+			bar.append( aside.toString() );
+			bar.append( errorMessage );
+			bar.append( aside.toString() );
+		} else {
+			for ( int i = 0; i < progress; i++) {
+				bar.append(progressChar);
+			}
+			for ( int i = 0; i < freeSpace ; i++) {
+				bar.append(freeSpaceChar);
+			}
+		}
+		bar.append(" ]");
+		return bar.toString();
+	}
 }
