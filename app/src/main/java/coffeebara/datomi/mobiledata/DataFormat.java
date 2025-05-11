@@ -1,4 +1,4 @@
-package burakkuneko.datomi.mobiledata;
+package coffeebara.datomi.mobiledata;
 
 public class DataFormat {
     public final static int BINARY = 1024;

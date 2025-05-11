@@ -1,4 +1,4 @@
-package burakkuneko.datomi;
+package coffeebara.datomi;
 
 import android.app.Service;
 import android.content.Intent;

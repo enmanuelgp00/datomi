@@ -1,9 +1,9 @@
-package burakkuneko.datomi;
+package coffeebara.datomi;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import burakkuneko.datomi.mobiledata.*;
+import coffeebara.datomi.mobiledata.*;
 import android.widget.LinearLayout;
 import android.widget.Button;
 import android.widget.EditText;

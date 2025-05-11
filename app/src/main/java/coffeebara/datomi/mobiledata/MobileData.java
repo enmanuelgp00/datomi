@@ -1,4 +1,4 @@
-package burakkuneko.datomi.mobiledata;
+package coffeebara.datomi.mobiledata;
 
 import java.util.Calendar;
 import java.text.SimpleDateFormat;

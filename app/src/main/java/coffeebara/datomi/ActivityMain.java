@@ -1,6 +1,6 @@
-package burakkuneko.datomi;
+package coffeebara.datomi;
 
-import burakkuneko.datomi.mobiledata.*;
+import coffeebara.datomi.mobiledata.*;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
