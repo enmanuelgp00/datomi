@@ -1,3 +1,7 @@
-build/*
-libs
-.gitignore
+# APK and build artifacts
+app/build/bin/
+*.apk
+*.apk.idsig
+*.dex
+*.class
+*.bat

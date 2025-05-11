@@ -187,10 +187,10 @@ public class ActivityMain extends Activity {
 			bar.append( aside.toString() );
 		} else {
 			for ( int i = 0; i < progress; i++) {
-				bar.append(progressChar);
+				bar.append( progressChar );
 			}
 			for ( int i = 0; i < freeSpace ; i++) {
-				bar.append(freeSpaceChar);
+				bar.append( freeSpaceChar );
 			}
 		}
 		bar.append(" ]");

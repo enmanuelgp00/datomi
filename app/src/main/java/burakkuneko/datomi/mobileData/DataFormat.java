@@ -4,8 +4,8 @@ public class DataFormat {
     public final static int BINARY = 1024;
     public final static int DECIMAL = 1000;
     String[] names;
-    final String[] BINARY_NAMES  = {"b", "KiB", "MiB", "GiB", "TiB"};
-    final String[] DECIMAL_NAMES = {"b", "KB" , "MB" , "GB" , "TB"};
+    final String[] BINARY_NAMES  = {"b", "kib", "mib", "gib", "tib"};
+    final String[] DECIMAL_NAMES = {"b", "kb" , "mb" , "gb" , "tb"};
     private int formatType;
 
     public DataFormat (int formatType) {
