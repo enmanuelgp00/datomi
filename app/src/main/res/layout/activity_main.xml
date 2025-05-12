@@ -14,28 +14,41 @@
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
 		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="100px"/>
+		android:layout_marginBottom="100dp"/>
 
 	<LinearLayout
+		android:id="@+id/main_wrapper"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">
+		
+		
+		
 
 		<LinearLayout
 			android:background="@drawable/rounded_corners"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:orientation="vertical"
 			android:gravity="center"
-			android:paddingTop="31px"
-			android:paddingBottom="52px"
+			android:paddingTop="14dp"
+			android:paddingBottom="21dp"
 			android:layout_margin="10dp">
-
-			<TextView
-				android:id="@+id/tv_info"
-				style="@style/common_text"
-				android:textColor="@color/blood" />
-
+			<LinearLayout 
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+				<TextView 
+					android:id="@+id/tv_days"
+					style="@style/common_text"
+					android:fontFamily="serif"
+					android:textSize="50dp" />
+				<TextView 
+					android:id="@+id/tv_deadline"
+					style="@style/common_text"/>
+				<TextView
+					android:id="@+id/tv_bar"
+					style="@style/common_text"/>
+			</LinearLayout>
 		</LinearLayout>
 
 		<ScrollView

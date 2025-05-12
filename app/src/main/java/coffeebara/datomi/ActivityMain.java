@@ -40,7 +40,10 @@ import java.util.Set;
 public class ActivityMain extends Activity {
    
    MobileDataManager mobileDataManager;
-   TextView textViewOutput, textViewInfo;
+   TextView textViewOutput,
+	textViewDeadline,
+	textViewDays,
+	textViewBar;
    Button buttonCheck;
    Handler handler = new Handler(Looper.getMainLooper());
    
@@ -50,7 +53,9 @@ public class ActivityMain extends Activity {
       handlePermissions();
 
       textViewOutput = findViewById(R.id.tv_log);
-      textViewInfo = findViewById(R.id.tv_info);
+      textViewDays = findViewById(R.id.tv_days);
+      textViewDeadline = findViewById(R.id.tv_deadline);
+      textViewBar = findViewById(R.id.tv_bar);
       buttonCheck = findViewById(R.id.btn_check);
       
 
@@ -136,37 +141,46 @@ public class ActivityMain extends Activity {
       };
    }
 
-   void display () {
-	final int BAR_SIZE = 32 ;
-	if (mobileDataManager.getLogOfToday().size() > 0) {
-		StringBuilder log = new StringBuilder();
-		SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM");
-		DataFormat dataFormatter = mobileDataManager.currentDataFormat();
-		ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
-		Collections.reverse(logGlobal);
+	void display () {
+		final int BAR_SIZE = 32 ;
+		if (mobileDataManager.getLogOfToday().size() > 0) {
+			StringBuilder log = new StringBuilder();
+			SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("dd MMMM");
+			//SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM YYYY");
+			DataFormat dataFormatter = mobileDataManager.currentDataFormat();
+			ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
+			Collections.reverse(logGlobal);
 			
-         for (String format : logGlobal) {
-			log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
-         }
+			for (String format : logGlobal) {
+				log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
+			}
 
-		long suggestion = mobileDataManager.todaySuggestionTillDeadline();
-		long used = mobileDataManager.todayDataBytesUsed();
-		int barProgress = (int) ( (double) used / suggestion * BAR_SIZE );
-		
-		textViewInfo.setText(String.format("[ %d day(s) ] - %s - \n\n  %-" + ( BAR_SIZE / 2 ) + "s%" + ( BAR_SIZE / 2 ) + "s \n%s",
-			mobileDataManager.getDaysTillDeadline(),
-			simpleDateFormatter.format(mobileDataManager.getDeadline().getTime()),
-			dataFormatter.format( used ),
-			dataFormatter.format( suggestion ),
-            retroBar( BAR_SIZE , barProgress ))
-         );
-		textViewOutput.setText(log.toString());
-      } else {
-		textViewOutput.setText("No data recorded yet");
-		textViewInfo.setText("");
-      }
-   }
+			long suggestion = mobileDataManager.todaySuggestionTillDeadline();
+			long used = mobileDataManager.todayDataBytesUsed();
+			int barProgress = (int) ( (double) used / suggestion * BAR_SIZE );
+			int remainingDays = mobileDataManager.getDaysTillDeadline();
 
+			textViewDays.setText(String.format("%d", remainingDays));
+			textViewDeadline.setText(String.format("  %30s\n%s", 
+				simpleDateFormatter.format(mobileDataManager.getDeadline().getTime()),
+				retroBar( 30, 30 - remainingDays )
+//				retroBar( BAR_SIZE, BAR_SIZE - (int)( (float) remainingDays / 30 * BAR_SIZE) )
+			)); 
+			textViewBar.setText(String.format("\n  %-" + ( BAR_SIZE / 2 ) + "s%" + ( BAR_SIZE / 2 ) + "s \n%s",
+				dataFormatter.format( used ),
+				dataFormatter.format( suggestion ),
+				retroBar( BAR_SIZE , barProgress )
+			));
+
+			textViewOutput.setText(log.toString());	
+		} else {
+			textViewOutput.setText("No data recorded yet");
+			textViewDays.setText("");
+			textViewDeadline.setText("");
+			textViewBar.setText("");
+		}
+	}
+	
 	String retroBar ( int length, int progress ) {
 		StringBuilder bar = new StringBuilder();
 		
