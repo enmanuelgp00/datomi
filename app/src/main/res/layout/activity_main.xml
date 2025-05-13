@@ -23,48 +23,38 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical">
 
+		<!-- info background -->
 		<LinearLayout
-			android:id="@+id/info_wrapper"
 			android:background="@drawable/rounded_corners"
+			android:paddingTop="14dp"
+			android:paddingBottom="36dp"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:paddingTop="14dp"
-			android:paddingBottom="36dp"
+			android:orientation="vertical"
 			android:layout_margin="@dimen/dp_1">
 
-			<LinearLayout 
+			<!-- info wrapper -->
+			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:padding="@dimen/dp_1"
 				android:orientation="vertical">
 
+				<!-- days wrapper -->
 				<LinearLayout
+					android:layout_marginLeft="@dimen/dp_1"
+					android:layout_marginBottom="@dimen/dp_1"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
 				 	<TextView 
 						android:id="@+id/tv_days"
 						style="@style/common_text"
 						android:fontFamily="serif"
-						android:textSize="50dp"
-						android:layout_marginLeft="@dimen/dp_1"
-						android:layout_marginBottom="@dimen/dp_1"/>
+						android:textSize="50dp"/>
 					<TextView
 						android:text=" day(s)"
 						style="@style/common_text"/>
-
-					<LinearLayout
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:gravity="right">
-
-						<TextView
-							android:id="@+id/tv_data"
-							style="@style/common_text"
-							android:layout_marginRight="@dimen/dp_1"/>
-
-					</LinearLayout>
-
 				</LinearLayout>
 				<TextView 
 					android:id="@+id/tv_deadline"

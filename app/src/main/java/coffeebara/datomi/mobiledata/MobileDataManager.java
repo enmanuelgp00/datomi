@@ -178,23 +178,29 @@ public class MobileDataManager {
 		long savedDataBytesUsed = book.getLong( DATA_BYTES_USED_KEY, 0L );
 		long todayDataBytesUsed = todayFirstMobileData.getDataBytes() - previousMobileData.getDataBytes();
 		long currentMobileTraffic = TrafficStats.getMobileTxBytes() + TrafficStats.getMobileRxBytes();
+		boolean isMobileDataOn = currentMobileTraffic != 0;
 
 		if ( savedDataBytesUsed != todayDataBytesUsed ) {
 			pen.putLong( DATA_BYTES_USED_KEY, todayDataBytesUsed )
-				.putLong( TRAFFIC_REFERENCE_KEY, currentMobileTraffic )
+				.putLong( TRAFFIC_REFERENCE_KEY, 0L)
+				.putLong( TRAFFIC_TOTAL_KEY, 0L)
 				.commit();
 			return todayDataBytesUsed;
 		}
+		
+		
 
-		if ( currentMobileTraffic != 0 ) {
+		if ( isMobileDataOn ) {
 			pen.putLong( TRAFFIC_TOTAL_KEY, currentMobileTraffic );
+
+			if ( book.getLong( TRAFFIC_REFERENCE_KEY, 0L ) == 0 ) {
+				pen.putLong( TRAFFIC_REFERENCE_KEY, currentMobileTraffic );
+			}
+
 			pen.commit();
 		}
-		if ( book.getLong( TRAFFIC_REFERENCE_KEY, 0L ) == 0 ) {
-			pen.putLong( TRAFFIC_REFERENCE_KEY, currentMobileTraffic );
-			pen.commit();
-		}
-		return savedDataBytesUsed + book.getLong( TRAFFIC_TOTAL_KEY, 0L )  - book.getLong( TRAFFIC_REFERENCE_KEY, 0L );
+
+		return savedDataBytesUsed + book.getLong( TRAFFIC_TOTAL_KEY, 0L ) - book.getLong( TRAFFIC_REFERENCE_KEY, 0L );
 	}
 
 	public void clearAllData() {

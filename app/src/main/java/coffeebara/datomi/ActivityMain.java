@@ -43,8 +43,7 @@ public class ActivityMain extends Activity {
 	TextView textViewOutput,
 		textViewDeadline,
 		textViewDays,
-		textViewBar,
-		textViewData;
+		textViewBar;
 	Button buttonCheck;
 	Handler handler = new Handler(Looper.getMainLooper());
 	
@@ -56,7 +55,6 @@ public class ActivityMain extends Activity {
 		handlePermissions();
 		textViewOutput = findViewById(R.id.tv_log);
 		textViewDays = findViewById(R.id.tv_days);
-		textViewData = findViewById(R.id.tv_data);
 		textViewDeadline = findViewById(R.id.tv_deadline);
 		textViewBar = findViewById(R.id.tv_bar);
 		buttonCheck = findViewById(R.id.btn_check);
@@ -189,10 +187,7 @@ public class ActivityMain extends Activity {
 			int remainingDays = mobileDataManager.getDaysTillDeadline();
 
 			textViewDays.setText(String.format("%d", remainingDays));
-			textViewData.setText( String.format( "%s > %s",
-				dataFormatter.format( mobileDataManager.getTodayLargerMobileData().getDataBytes()),
-				dataFormatter.format( mobileDataManager.getCurrentMobileData().getDataBytes())
-			));
+
 			textViewDeadline.setText(String.format("  %30s\n%s", 
 				simpleDateFormatter.format(mobileDataManager.getDeadline().getTime()),
 				retroBar( 30, 30 - remainingDays )
