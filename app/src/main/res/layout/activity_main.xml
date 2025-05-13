@@ -8,8 +8,9 @@
 	
 	<Button
 		android:id="@+id/btn_check"
-		android:text="Check"
+		android:text="+"
 		android:fontFamily="monospace"
+		android:textSize="34dp"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
@@ -21,30 +22,54 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">
-		
-		
-		
 
 		<LinearLayout
+			android:id="@+id/info_wrapper"
 			android:background="@drawable/rounded_corners"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
 			android:paddingTop="14dp"
-			android:paddingBottom="21dp"
-			android:layout_margin="10dp">
+			android:paddingBottom="36dp"
+			android:layout_margin="@dimen/dp_1">
+
 			<LinearLayout 
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:orientation="vertical">
-				<TextView 
-					android:id="@+id/tv_days"
-					style="@style/common_text"
-					android:fontFamily="serif"
-					android:textSize="50dp" />
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+				 	<TextView 
+						android:id="@+id/tv_days"
+						style="@style/common_text"
+						android:fontFamily="serif"
+						android:textSize="50dp"
+						android:layout_marginLeft="@dimen/dp_1"
+						android:layout_marginBottom="@dimen/dp_1"/>
+					<TextView
+						android:text=" day(s)"
+						style="@style/common_text"/>
+
+					<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:gravity="right">
+
+						<TextView
+							android:id="@+id/tv_data"
+							style="@style/common_text"
+							android:layout_marginRight="@dimen/dp_1"/>
+
+					</LinearLayout>
+
+				</LinearLayout>
 				<TextView 
 					android:id="@+id/tv_deadline"
-					style="@style/common_text"/>
+					style="@style/common_text"
+					android:layout_marginBottom="17dp"/>
 				<TextView
 					android:id="@+id/tv_bar"
 					style="@style/common_text"/>
@@ -56,13 +81,16 @@
 			android:layout_height="match_parent">
 
 			<LinearLayout
+					
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:gravity="center">
 
 				<TextView
 					android:id="@+id/tv_log"
-					style="@style/common_text"/>
+					style="@style/common_text"
+					android:paddingLeft="@dimen/dp_1"
+					android:paddingRight="@dimen/dp_1"/>
 
 			</LinearLayout>
 

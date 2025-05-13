@@ -2,8 +2,10 @@
 	<color name="white">#ffffff</color>
 	<color name="blood">#ff5555</color>
 	<color name="black">#000000</color>
-	<color name="primary">#222222</color>
-	<color name="background">#414141</color>
+	<color name="background">#3f4e4f</color>
+	<color name="primary">#122220</color>
+	<dimen name="dp_1">11dp</dimen>
+	<dimen name="corners_1">14dp</dimen>
 
 	<style name="common_text">
 		<item name="android:textSize">15sp</item>
