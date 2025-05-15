@@ -5,7 +5,8 @@
 	android:layout_height="match_parent"
 	android:background="@color/background"
 	android:orientation="vertical">
-	
+
+		<!--
 	<Button
 		android:id="@+id/btn_check"
 		android:text="+"
@@ -15,8 +16,9 @@
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
 		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="100dp"/>
-
+		android:layout_marginBottom="20dp"/>
+		-->
+	<include layout="@layout/view_nav_bar"/>
 	<LinearLayout
 		android:id="@+id/main_wrapper"
 		android:layout_width="match_parent"
@@ -25,7 +27,7 @@
 
 		<!-- info background -->
 		<LinearLayout
-			android:background="@drawable/rounded_corners"
+			
 			android:paddingTop="14dp"
 			android:paddingBottom="36dp"
 			android:layout_width="match_parent"
@@ -34,57 +36,27 @@
 			android:orientation="vertical"
 			android:layout_margin="@dimen/dp_1">
 
+			<include layout="@layout/activity_main_view_days" />
+			
 			<!-- info wrapper -->
 			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:padding="@dimen/dp_1"
-				android:orientation="vertical">
-
-				<!-- days wrapper -->
-				<LinearLayout
-					android:layout_marginLeft="@dimen/dp_1"
-					android:layout_marginBottom="@dimen/dp_1"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-				 	<TextView 
-						android:id="@+id/tv_days"
-						style="@style/common_text"
-						android:fontFamily="serif"
-						android:textSize="50dp"/>
-					<TextView
-						android:text=" day(s)"
-						style="@style/common_text"/>
-				</LinearLayout>
+				android:orientation="vertical">				
 				<TextView 
 					android:id="@+id/tv_deadline"
 					style="@style/common_text"
 					android:layout_marginBottom="17dp"/>
 				<TextView
-					android:id="@+id/tv_bar"
+					android:id="@+id/tv_suggestion"
+					style="@style/common_text"
+					android:layout_marginBottom="17dp"/>
+				<TextView
+					android:id="@+id/tv_data"					
 					style="@style/common_text"/>
 			</LinearLayout>
 		</LinearLayout>
-
-		<ScrollView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent">
-
-			<LinearLayout
-					
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:gravity="center">
-
-				<TextView
-					android:id="@+id/tv_log"
-					style="@style/common_text"
-					android:paddingLeft="@dimen/dp_1"
-					android:paddingRight="@dimen/dp_1"/>
-
-			</LinearLayout>
-
-		</ScrollView>
 	</LinearLayout>
 
 </RelativeLayout>

@@ -40,28 +40,31 @@ import java.util.Set;
 public class ActivityMain extends Activity {
 	
 	MobileDataManager mobileDataManager;
-	TextView textViewOutput,
-		textViewDeadline,
+	TextView textViewDeadline,
 		textViewDays,
-		textViewBar;
-	Button buttonCheck;
+		textViewSuggestion,
+		textViewData,
+		textViewDaysLabel;
+	TextView buttonCheck;
 	Handler handler = new Handler(Looper.getMainLooper());
 	
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);		
-		setContentView(R.layout.activity_main);	
-
+		setContentView(R.layout.activity_main);
 
 		handlePermissions();
-		textViewOutput = findViewById(R.id.tv_log);
+		
 		textViewDays = findViewById(R.id.tv_days);
+		textViewDaysLabel = findViewById(R.id.tv_days_label);
 		textViewDeadline = findViewById(R.id.tv_deadline);
-		textViewBar = findViewById(R.id.tv_bar);
+		textViewSuggestion = findViewById(R.id.tv_suggestion);
+		textViewData = findViewById(R.id.tv_data);
 		buttonCheck = findViewById(R.id.btn_check);
 
 		mobileDataManager = new MobileDataManager(this);
 		buttonCheck.setOnClickListener(checkData());
-
+	
+		/*
 		textViewOutput.setOnClickListener( new View.OnClickListener(){
 			@Override
 			public void onClick(View view) {
@@ -82,14 +85,30 @@ public class ActivityMain extends Activity {
 				notificationManager.notify(1, builder.build());
 			}
 		});
-
+		*/
+		
+		refresh();
 	}
-	
+	void refresh() {
+		
+		Runnable displaying = new Runnable() {
+			@Override
+			public void run () {
+				display();
+				refresh();
+			}
+		};		
+		handler.postDelayed( displaying, 1000 );
+	}
+
+	public void message( String text ) {
+		Toast.makeText( this, text, Toast.LENGTH_SHORT ).show();
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		//mobileDataManager = new MobileDataManager(this);
-		//displayRefresh();
+		mobileDataManager.update();
 		display();
 	}
 	
@@ -121,7 +140,7 @@ public class ActivityMain extends Activity {
 			@Override
 			public void onClick(View view) {
 				String loadingMessage = "...";
-				// mobileDataManager = new MobileDataManager(getApplicationContext());
+				mobileDataManager.update();
 				CharSequence buttonCheckText = buttonCheck.getText();
 				buttonCheck.setEnabled(false);
 				buttonCheck.setText( loadingMessage );
@@ -149,62 +168,63 @@ public class ActivityMain extends Activity {
 			requestPermissions(new String[] {Manifest.permission.CALL_PHONE}, 1);
 		};
 	}
-	void displayRefresh() {
-	Thread loop	= new Thread ( new Runnable() {
-			@Override
-			public void run () {
-				display();
-				try {
-					Thread.sleep( 5000 );
-				} catch ( Exception e ) {
-
-				}
-				displayRefresh();
-			}
-		});
-		//loop.start();
-		//handler.post( loop ); //is need if you update UI elements from onCreate();
-		//runOnUiThread( loop );
-	}
 
 	void display () {
 		final int BAR_SIZE = 30 ;
 		if (mobileDataManager.getLogOfToday().size() > 0) {
+			
 			StringBuilder log = new StringBuilder();
 			SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("dd MMMM");
 			//SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM YYYY");
 			DataFormat dataFormatter = mobileDataManager.currentDataFormat();
+			/*
 			ArrayList<String> logGlobal = new ArrayList<String> (mobileDataManager.getLogGlobal());
 			Collections.reverse(logGlobal);
 			
 			for (String format : logGlobal) {
 				log.append(MobileData.parseStringFormat(format, dataFormatter).asString());
 			}
+			*/
 
 			long suggestion = mobileDataManager.getTodaySuggestionTillDeadline();
 			long used = mobileDataManager.getTodayDataBytesUsed();
+			long current =  mobileDataManager.getTodayCurrentMobileData().getDataBytes();
+			long initial = mobileDataManager.getTodayLargerMobileData().getDataBytes();
+
 			int barProgress = (int) ( (double) used / suggestion * BAR_SIZE );
 			int remainingDays = mobileDataManager.getDaysTillDeadline();
 
 			textViewDays.setText(String.format("%d", remainingDays));
-
-			textViewDeadline.setText(String.format("  %30s\n%s", 
-				simpleDateFormatter.format(mobileDataManager.getDeadline().getTime()),
-				retroBar( 30, 30 - remainingDays )
+			textViewDaysLabel.setText( remainingDays > 1 ? "days" : "day" );
+			textViewDeadline.setText(String.format("  %" + BAR_SIZE + "s\n  %" + ( BAR_SIZE - remainingDays + 1 ) + "d\n%s\n", 
+				simpleDateFormatter.format( mobileDataManager.getDeadline().getTime() ),
+				remainingDays,
+				retroBar( BAR_SIZE, BAR_SIZE - remainingDays )
 			));
 
-			textViewBar.setText(String.format("  %-" + ( BAR_SIZE / 2 ) + "s%" + ( BAR_SIZE / 2 ) + "s \n%s",
+			textViewSuggestion.setText( String.format("  %"+ ( barProgress <= BAR_SIZE ? barProgress + 1 : BAR_SIZE ) +"s \n%s\n  %" + ( BAR_SIZE ) + "s",
 				dataFormatter.format( used ),
-				dataFormatter.format( suggestion ),
-				retroBar( BAR_SIZE , barProgress )
+				retroBar( BAR_SIZE , barProgress ),
+				dataFormatter.format( suggestion )
 			));
 
-			textViewOutput.setText(log.toString());	
+
+			int progressTillCero = BAR_SIZE - (int)( (float) current / initial * BAR_SIZE );
+
+			textViewData.setText( String.format("  %" + ( progressTillCero + 1 ) + "s\n%s\n  %-"+ ( BAR_SIZE / 2 ) +"s%"+ ( BAR_SIZE / 2 ) +"s" ,
+				dataFormatter.format( current ),
+				retroBar( BAR_SIZE,  progressTillCero ),
+				dataFormatter.format( initial ),
+				dataFormatter.format( 0 )
+				)
+			);
+
 		} else {
-			textViewOutput.setText("No data recorded yet");
-			textViewDays.setText("?");
+			textViewDays.setText("");
+			textViewDaysLabel.setText("");
 			textViewDeadline.setText("");
-			textViewBar.setText("");
+			textViewSuggestion.setText("");
+			textViewData.setText("Press the button [ " + buttonCheck.getText() + " ] to record data");
 		}
 	}
 
@@ -214,7 +234,7 @@ public class ActivityMain extends Activity {
 		StringBuilder bar = new StringBuilder();
 		
 		String errorMessage = " ( Overpassed ) ";
-		char progressChar = '/' ;
+		char progressChar = '#' ;
 		char freeSpaceChar = '.' ;
 		int freeSpace = length - progress ;
 		bar.append("[ ");

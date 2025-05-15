@@ -4,8 +4,11 @@ public class DataFormat {
     public final static int BINARY = 1024;
     public final static int DECIMAL = 1000;
     String[] names;
-    final String[] BINARY_NAMES  = {"b", "kib", "mib", "gib", "tib"};
-    final String[] DECIMAL_NAMES = {"b", "kb" , "mb" , "gb" , "tb"};
+    final String[] BINARY_NAMES  = {"B", "KiB", "Mib", "Gib", "Tib"};
+    final String[] DECIMAL_NAMES = {"b", "Kb" , "Mb" , "Gb" , "Tb"};
+//    final String[] BINARY_NAMES  = {"b", "kib", "mib", "gib", "tib"};
+//    final String[] DECIMAL_NAMES = {"b", "kb" , "mb" , "gb" , "tb"};
+
     private int formatType;
 
     public DataFormat (int formatType) {
@@ -22,11 +25,11 @@ public class DataFormat {
         int scale;
         for (int i = 0; i < names.length; i++) {
             scale = i + 1;
-            data = bytes / Math.pow(formatType, scale);
+            data = bytes / Math.pow( formatType, scale );
             if (data < formatType && data >= 0) {
                 return String.format("%,.2f %s",
                     data,
-                    names[scale]
+                    names[ scale ]
                 );
             }
         }

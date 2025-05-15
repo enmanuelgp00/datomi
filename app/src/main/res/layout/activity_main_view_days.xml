@@ -1,0 +1,17 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:padding="24dp"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+	<TextView 
+		android:id="@+id/tv_days"
+		style="@style/common_text"
+		android:fontFamily="serif"
+		android:textSize="57dp"/>
+	<TextView
+		style="@style/highlight_text"
+		android:text=" day(s)"
+		android:id="@+id/tv_days_label"
+		android:fontFamily="serif"
+		android:layout_marginLeft="@dimen/dp_1"/>
+</LinearLayout>

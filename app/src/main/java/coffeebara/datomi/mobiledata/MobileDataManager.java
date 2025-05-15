@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 import android.net.TrafficStats;
+import android.util.Log;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,6 +17,9 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
 public class MobileDataManager {
+	
+	float debugData = 5.0f;
+	float debugUseRate = 0.0001f * 5.0f;
 
 	Handler mainLooper = new Handler(Looper.getMainLooper());
 	Context context;
@@ -27,16 +31,22 @@ public class MobileDataManager {
 	MobileData previousMobileData, todayFirstMobileData, currentMobileData;
 	TreeSet<String> logOfKeys, logOfToday;
 	String keyLogOfToday;
-	final String DATA_BYTES_USED_KEY = "DATA_BYTES_USED";
-	final String TRAFFIC_REFERENCE_KEY = "TRAFFIC_REFERENCE";
-	final String TRAFFIC_TOTAL_KEY = "TRAFFIC_TOTAL";
-
+	
+	private class Key {
+		final static String DEBUG_MODE = "debugMode";
+		final static String DATA_BYTES_USED = "dataBytesUsed";
+		final static String TRAFFIC_REFERENCE = "trafficReference";
+		final static String TRAFFIC_TOTAL = "trafficTotal";
+	}
 	public MobileDataManager(Context context) {
 		this.context = context;
 		telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		book = context.getSharedPreferences("book", Context.MODE_PRIVATE);
 		pen = book.edit();
-
+		update();
+		
+	}
+	public void update() {
 		logOfKeys = getLogOfKeys(); 
 
 		logOfToday = getLogOfToday(); 
@@ -59,27 +69,68 @@ public class MobileDataManager {
 	}
 
 	public void checkMobileData( OnReceiveMobileData onReceiveMobileData ) {
-		telephonyManager.sendUssdRequest("*222#", new TelephonyManager.UssdResponseCallback() {
+		if ( isDebugModeOn() ) {
+			String res = debugText();
+			String todayKey = getKeyOfToday();
 
-			@Override
-			public void onReceiveUssdResponse(TelephonyManager telephonyManager, String request, CharSequence res) {
-				String todayKey = getKeyOfToday();
+			currentMobileData = new MobileData( res , System.currentTimeMillis(), currentDataFormat());
+			store(logOfToday, todayKey, currentMobileData.getStringFormat());
+			if ( !logOfKeys.contains( todayKey ) ) {
+				store( logOfKeys, "logOfKeys", getKeyOfToday() );
+				todayFirstMobileData = getTodayFirstMobileData();
+			}
+			checkDeadline( currentMobileData );
+			onReceiveMobileData.onReceive( currentMobileData, res );
+					
+			
+		} else {
+			telephonyManager.sendUssdRequest("*222#", new TelephonyManager.UssdResponseCallback() {
+	
+				@Override
+				public void onReceiveUssdResponse(TelephonyManager telephonyManager, String request, CharSequence res) {
+					String todayKey = getKeyOfToday();
 
-				currentMobileData = new MobileData(res.toString(), System.currentTimeMillis(), currentDataFormat());
-				store(logOfToday, todayKey, currentMobileData.getStringFormat());
-				if ( !logOfKeys.contains( todayKey ) ) {
-					store(logOfKeys, "logOfKeys", getKeyOfToday());
-					todayFirstMobileData = getTodayFirstMobileData();
+					currentMobileData = new MobileData(res.toString(), System.currentTimeMillis(), currentDataFormat());
+					store(logOfToday, todayKey, currentMobileData.getStringFormat());
+					if ( !logOfKeys.contains( todayKey ) ) {
+						store(logOfKeys, "logOfKeys", getKeyOfToday());
+						todayFirstMobileData = getTodayFirstMobileData();
+					}
+					checkDeadline( currentMobileData );
+					onReceiveMobileData.onReceive(currentMobileData, res.toString());
 				}
-				checkDeadline( currentMobileData );
-				onReceiveMobileData.onReceive(currentMobileData, res.toString());
-			}
 
-			@Override
-			public void onReceiveUssdResponseFailed(TelephonyManager telephonyManager, String request, int failCode ) {
-				onReceiveMobileData.onReceiveFailed( failCode );
-			}
-		}, mainLooper);
+				@Override
+				public void onReceiveUssdResponseFailed(TelephonyManager telephonyManager, String request, int failCode ) {
+					onReceiveMobileData.onReceiveFailed( failCode );
+				}
+			}, mainLooper);
+
+		}
+	}
+
+
+//	Debugging 
+
+	private String debugText() {		
+		return String.format( "Saldo: 870.53 CUP. Datos: %.2f GB Voz: 03:49:00. SMS: 369. Linea activa hasta 04-03-26 vence 31-08-26" , debugData > 0 ? debugData -= debugUseRate : 0 );
+	}
+	public boolean isDebugModeOn() {
+		return book.getBoolean( Key.DEBUG_MODE , false );
+	}
+	
+	public void enableDebugMode() {
+		if ( !isDebugModeOn() ) {
+			pen.putBoolean( Key.DEBUG_MODE, true )
+				.commit();
+		}
+	}
+	
+	public void disableDebugMode() {
+		if ( isDebugModeOn() ) {
+			pen.putBoolean( Key.DEBUG_MODE, false )
+				.commit();
+		}
 	}
 
 	private void store(TreeSet<String> collection, String id, String info) {
@@ -101,6 +152,8 @@ public class MobileDataManager {
 		}
 		return logGlobal;
 	}
+
+//	Deadline
 
 	public Calendar getDeadline() {
 		Calendar deadline = Calendar.getInstance();
@@ -132,6 +185,8 @@ public class MobileDataManager {
 		return (int) (diffDaysMillis / (1000 * 60 * 60 * 24));
 	}
 
+//	Dataformat
+
 	public DataFormat currentDataFormat() {
 		return new DataFormat(book.getInt("data_format", DataFormat.DECIMAL));
 	}
@@ -141,6 +196,8 @@ public class MobileDataManager {
 		pen.apply();
 	}
 
+//	Today Data
+
 	private MobileData getTodayFirstMobileData() {
 		if (logOfToday.size() > 0) {
 			return MobileData.parseStringFormat( logOfToday.first(), currentDataFormat() );
@@ -148,7 +205,7 @@ public class MobileDataManager {
 			return null;
 		}
 	}
-	public MobileData getCurrentMobileData() {
+	public MobileData getTodayCurrentMobileData() {
 		return previousMobileData;
 	}
 	public String getKeyOfToday() {
@@ -174,34 +231,49 @@ public class MobileDataManager {
 	}
 
 	public long getTodayDataBytesUsed() {
+		
+		long savedDataBytesUsed = book.getLong( Key.DATA_BYTES_USED, 0L );
+		long todayDataBytesUsed = 0 ;
+		MobileData todayFirstMobileData;
 
-		long savedDataBytesUsed = book.getLong( DATA_BYTES_USED_KEY, 0L );
-		long todayDataBytesUsed = todayFirstMobileData.getDataBytes() - previousMobileData.getDataBytes();
+		if ( ( todayFirstMobileData = getTodayFirstMobileData() ) == null ) {
+			todayDataBytesUsed = 0L;
+		} else {
+			todayDataBytesUsed = todayFirstMobileData.getDataBytes() - previousMobileData.getDataBytes();
+		} 
+
 		long currentMobileTraffic = TrafficStats.getMobileTxBytes() + TrafficStats.getMobileRxBytes();
+
 		boolean isMobileDataOn = currentMobileTraffic != 0;
 
 		if ( savedDataBytesUsed != todayDataBytesUsed ) {
-			pen.putLong( DATA_BYTES_USED_KEY, todayDataBytesUsed )
-				.putLong( TRAFFIC_REFERENCE_KEY, 0L)
-				.putLong( TRAFFIC_TOTAL_KEY, 0L)
-				.commit();
+			int tolerance =  (int) Math.pow( 1000, 2 ) * 10 ; // 10mb of tolerance
+			pen.putLong( Key.DATA_BYTES_USED, todayDataBytesUsed );
+
+			if ( currentMobileTraffic / tolerance != savedDataBytesUsed / tolerance ) {
+				pen.putLong( Key.TRAFFIC_REFERENCE, 0L)
+				.putLong( Key.TRAFFIC_TOTAL, 0L);				
+			}
+			pen.commit();
 			return todayDataBytesUsed;
 		}
 		
 		
 
 		if ( isMobileDataOn ) {
-			pen.putLong( TRAFFIC_TOTAL_KEY, currentMobileTraffic );
+			pen.putLong( Key.TRAFFIC_TOTAL, currentMobileTraffic );
 
-			if ( book.getLong( TRAFFIC_REFERENCE_KEY, 0L ) == 0 ) {
-				pen.putLong( TRAFFIC_REFERENCE_KEY, currentMobileTraffic );
+			if ( book.getLong( Key.TRAFFIC_REFERENCE, 0L ) == 0 ) {
+				pen.putLong( Key.TRAFFIC_REFERENCE, currentMobileTraffic );
 			}
-
 			pen.commit();
 		}
-
-		return savedDataBytesUsed + book.getLong( TRAFFIC_TOTAL_KEY, 0L ) - book.getLong( TRAFFIC_REFERENCE_KEY, 0L );
+		return savedDataBytesUsed + book.getLong( Key.TRAFFIC_TOTAL, 0L ) - book.getLong( Key.TRAFFIC_REFERENCE, 0L );
+		
+		
 	}
+
+//	Cleaning
 
 	public void clearAllData() {
 		pen.clear();
@@ -213,9 +285,9 @@ public class MobileDataManager {
 		pen.putStringSet(todaysKey, logOfToday);
 		logOfKeys.remove(todaysKey);
 		pen.putStringSet("logOfKeys", logOfKeys)
-		.remove( DATA_BYTES_USED_KEY )
-		.remove( TRAFFIC_REFERENCE_KEY )
-		.remove( TRAFFIC_TOTAL_KEY );
+		.remove( Key.DATA_BYTES_USED )
+		.remove( Key.TRAFFIC_REFERENCE )
+		.remove( Key.TRAFFIC_TOTAL );
 		pen.commit();
 	}
 }
