@@ -7,7 +7,7 @@
 		android:id="@+id/tv_days"
 		style="@style/common_text"
 		android:fontFamily="serif"
-		android:textSize="57dp"/>
+		android:textSize="@dimen/large_text"/>
 	<TextView
 		style="@style/highlight_text"
 		android:text=" day(s)"

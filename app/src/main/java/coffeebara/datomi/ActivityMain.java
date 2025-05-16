@@ -1,6 +1,7 @@
 package coffeebara.datomi;
 
 import coffeebara.datomi.mobiledata.*;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
@@ -44,14 +45,14 @@ public class ActivityMain extends Activity {
 		textViewDays,
 		textViewSuggestion,
 		textViewData,
-		textViewDaysLabel,
-		tvBtnCheck;
-	ViewGroup btnCheck;
+		textViewDaysLabel;
+	Button btnCheck;
 	Handler handler = new Handler(Looper.getMainLooper());
 	
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);		
 		setContentView(R.layout.activity_main);
+		mobileDataManager = new MobileDataManager(this);
 
 		handlePermissions();
 		
@@ -61,10 +62,9 @@ public class ActivityMain extends Activity {
 		textViewSuggestion = findViewById(R.id.tv_suggestion);
 		textViewData = findViewById(R.id.tv_data);
 		btnCheck = findViewById(R.id.btn_check);
-		tvBtnCheck = (TextView) btnCheck.getChildAt( 0 );
 
-		mobileDataManager = new MobileDataManager(this);
 		btnCheck.setOnClickListener( checkData() );
+
 		/*
 		textViewOutput.setOnClickListener( new View.OnClickListener(){
 			@Override
@@ -142,22 +142,22 @@ public class ActivityMain extends Activity {
 			public void onClick(View view) {
 				final String loadingMessage = " ... ";
 				mobileDataManager.update();
-				CharSequence btnCheckText = tvBtnCheck.getText();
-				tvBtnCheck.setEnabled(false);
-				tvBtnCheck.setText( loadingMessage );
+				CharSequence btnCheckText = btnCheck.getText();
+				btnCheck.setEnabled(false);
+				btnCheck.setText( loadingMessage );
 				mobileDataManager.checkMobileData( new MobileDataManager.OnReceiveMobileData() {
 					@Override
 					public void onReceive(MobileData mobileData, String source) {
 						Toast.makeText(ActivityMain.this, source, Toast.LENGTH_LONG).show();
 						display();
-						tvBtnCheck.setEnabled(true);
-						tvBtnCheck.setText( btnCheckText );
+						btnCheck.setEnabled(true);
+						btnCheck.setText( btnCheckText );
 					}
 					@Override
 					public void onReceiveFailed( int failCode ) {
 						Toast.makeText(ActivityMain.this, "USSD receive failed: code : " + failCode , Toast.LENGTH_LONG).show();
-						tvBtnCheck.setEnabled(true);
-						tvBtnCheck.setText( btnCheckText );
+						btnCheck.setEnabled(true);
+						btnCheck.setText( btnCheckText );
 					}
 				});
 			}
@@ -225,7 +225,7 @@ public class ActivityMain extends Activity {
 			textViewDaysLabel.setText("");
 			textViewDeadline.setText("");
 			textViewSuggestion.setText("");
-			textViewData.setText("Press the button [ " + tvBtnCheck.getText() + " ] to record data");
+			textViewData.setText("Press the button [ " + btnCheck.getText() + " ] to record data");
 		}
 	}
 

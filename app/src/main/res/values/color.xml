@@ -1,7 +1,10 @@
 <resources>
-	<color name="white">#ffffff</color>
-	<color name="black">#000000</color>
+
 	<color name="background">#3f4e4f</color> <!-- dark green -->
 	<color name="primary">#122220</color> <!-- darker green -->
+	<color name="secondary">#f8d794</color>
+
+	<color name="white">#ffffff</color>
+	<color name="black">#000000</color>
 	<color name="silver">#dddddd</color>
 </resources>

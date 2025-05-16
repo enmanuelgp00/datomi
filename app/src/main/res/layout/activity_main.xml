@@ -4,21 +4,9 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:background="@color/background"
+	android:fontFamily="monospace"
 	android:orientation="vertical">
 
-		<!--
-	<Button
-		android:id="@+id/btn_check"
-		android:text="+"
-		android:fontFamily="monospace"
-		android:textSize="34dp"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
-		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="20dp"/>
-		-->
-	<include layout="@layout/view_nav_bar"/>
 	<LinearLayout
 		android:id="@+id/main_wrapper"
 		android:layout_width="match_parent"
@@ -27,7 +15,6 @@
 
 		<!-- info background -->
 		<LinearLayout
-			
 			android:paddingTop="14dp"
 			android:paddingBottom="36dp"
 			android:layout_width="match_parent"
@@ -58,5 +45,32 @@
 			</LinearLayout>
 		</LinearLayout>
 	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/nav_bar"
+		android:layout_width="match_parent"
+		android:layout_height="57dp"
+		android:gravity="center"
+		android:layout_centerInParent="true"
+		android:layout_alignParentBottom="true"
+		android:weightSum="3"
+		android:background="@color/primary">
+		
+	</LinearLayout>
+	
+	<Button
+		android:id="@+id/btn_check"
+		android:background="@drawable/button_selector"
+		android:layout_width="87dp"
+		android:layout_height="87dp"
+		android:layout_centerInParent="true"
+		android:layout_alignBottom="@id/nav_bar"
+		android:layout_marginBottom="21dp"
+		android:fontFamily="serif"
+		android:stateListAnimator="@null"
+		android:elevation="0dp"
+		android:text="+"
+		android:textSize="@dimen/large_text"/>
+
 
 </RelativeLayout>

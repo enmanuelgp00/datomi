@@ -1,5 +1,9 @@
 <resources>
 	<dimen name="dp_0">7dp</dimen>
 	<dimen name="dp_1">11dp</dimen>
+	<dimen name="dp_2">23dp</dimen>
+
+	<dimen name="large_text">57dp</dimen>
+
 	<dimen name="corners_1">@dimen/dp_0</dimen>
 </resources>
