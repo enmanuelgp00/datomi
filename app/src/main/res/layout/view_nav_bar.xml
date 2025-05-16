@@ -5,25 +5,24 @@
 	android:gravity="center"
 	android:layout_centerInParent="true"
 	android:layout_alignParentBottom="true"
-	android:padding="17dp"
 	android:weightSum="3"
 	android:background="@color/primary"
 	>
 	<LinearLayout
-		style="@style/nav_element">
+		style="@style/nav_button">
 		<TextView 
 			style="@style/common_text"
 			android:text="home"/>
 	</LinearLayout>
 	<LinearLayout
-		style="@style/nav_element">
+		android:id="@+id/btn_check"
+		style="@style/nav_button">
 		<TextView 
 			style="@style/common_text"
-			android:id="@+id/btn_check"
 			android:text="check"/>
 	</LinearLayout>
 	<LinearLayout
-		style="@style/nav_element">
+		style="@style/nav_button">
 		<TextView
 			style="@style/common_text"
 			android:text="details"/>

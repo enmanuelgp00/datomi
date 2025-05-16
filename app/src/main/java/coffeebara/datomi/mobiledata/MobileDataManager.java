@@ -268,11 +268,12 @@ public class MobileDataManager {
 			}
 			pen.commit();
 		}
-		return savedDataBytesUsed + book.getLong( Key.TRAFFIC_TOTAL, 0L ) - book.getLong( Key.TRAFFIC_REFERENCE, 0L );
-		
-		
+		return savedDataBytesUsed + getDataBytesOffset();
 	}
-
+	
+	public long getDataBytesOffset() {
+		return book.getLong( Key.TRAFFIC_TOTAL, 0L ) - book.getLong( Key.TRAFFIC_REFERENCE, 0L);
+	}
 //	Cleaning
 
 	public void clearAllData() {

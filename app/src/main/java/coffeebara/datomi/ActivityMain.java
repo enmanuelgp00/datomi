@@ -1,7 +1,6 @@
 package coffeebara.datomi;
 
 import coffeebara.datomi.mobiledata.*;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
@@ -25,6 +24,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -44,8 +44,9 @@ public class ActivityMain extends Activity {
 		textViewDays,
 		textViewSuggestion,
 		textViewData,
-		textViewDaysLabel;
-	TextView buttonCheck;
+		textViewDaysLabel,
+		tvBtnCheck;
+	ViewGroup btnCheck;
 	Handler handler = new Handler(Looper.getMainLooper());
 	
 	public void onCreate(Bundle savedState) {
@@ -59,11 +60,11 @@ public class ActivityMain extends Activity {
 		textViewDeadline = findViewById(R.id.tv_deadline);
 		textViewSuggestion = findViewById(R.id.tv_suggestion);
 		textViewData = findViewById(R.id.tv_data);
-		buttonCheck = findViewById(R.id.btn_check);
+		btnCheck = findViewById(R.id.btn_check);
+		tvBtnCheck = (TextView) btnCheck.getChildAt( 0 );
 
 		mobileDataManager = new MobileDataManager(this);
-		buttonCheck.setOnClickListener(checkData());
-	
+		btnCheck.setOnClickListener( checkData() );
 		/*
 		textViewOutput.setOnClickListener( new View.OnClickListener(){
 			@Override
@@ -139,24 +140,24 @@ public class ActivityMain extends Activity {
 		return new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				String loadingMessage = "...";
+				final String loadingMessage = " ... ";
 				mobileDataManager.update();
-				CharSequence buttonCheckText = buttonCheck.getText();
-				buttonCheck.setEnabled(false);
-				buttonCheck.setText( loadingMessage );
+				CharSequence btnCheckText = tvBtnCheck.getText();
+				tvBtnCheck.setEnabled(false);
+				tvBtnCheck.setText( loadingMessage );
 				mobileDataManager.checkMobileData( new MobileDataManager.OnReceiveMobileData() {
 					@Override
 					public void onReceive(MobileData mobileData, String source) {
 						Toast.makeText(ActivityMain.this, source, Toast.LENGTH_LONG).show();
 						display();
-						buttonCheck.setEnabled(true);
-						buttonCheck.setText(buttonCheckText);
+						tvBtnCheck.setEnabled(true);
+						tvBtnCheck.setText( btnCheckText );
 					}
 					@Override
 					public void onReceiveFailed( int failCode ) {
 						Toast.makeText(ActivityMain.this, "USSD receive failed: code : " + failCode , Toast.LENGTH_LONG).show();
-						buttonCheck.setEnabled(true);
-						buttonCheck.setText(buttonCheckText);
+						tvBtnCheck.setEnabled(true);
+						tvBtnCheck.setText( btnCheckText );
 					}
 				});
 			}
@@ -188,7 +189,7 @@ public class ActivityMain extends Activity {
 
 			long suggestion = mobileDataManager.getTodaySuggestionTillDeadline();
 			long used = mobileDataManager.getTodayDataBytesUsed();
-			long current =  mobileDataManager.getTodayCurrentMobileData().getDataBytes();
+			long current =  mobileDataManager.getTodayCurrentMobileData().getDataBytes() - mobileDataManager.getDataBytesOffset();
 			long initial = mobileDataManager.getTodayLargerMobileData().getDataBytes();
 
 			int barProgress = (int) ( (double) used / suggestion * BAR_SIZE );
@@ -224,7 +225,7 @@ public class ActivityMain extends Activity {
 			textViewDaysLabel.setText("");
 			textViewDeadline.setText("");
 			textViewSuggestion.setText("");
-			textViewData.setText("Press the button [ " + buttonCheck.getText() + " ] to record data");
+			textViewData.setText("Press the button [ " + tvBtnCheck.getText() + " ] to record data");
 		}
 	}
 
@@ -233,7 +234,7 @@ public class ActivityMain extends Activity {
 	String retroBar ( int length, int progress ) {
 		StringBuilder bar = new StringBuilder();
 		
-		String errorMessage = " ( Overpassed ) ";
+		String errorMessage = " ( Overload ) ";
 		char progressChar = '#' ;
 		char freeSpaceChar = '.' ;
 		int freeSpace = length - progress ;
