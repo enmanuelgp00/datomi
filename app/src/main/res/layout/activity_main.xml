@@ -29,19 +29,27 @@
 			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:padding="@dimen/dp_1"
-				android:orientation="vertical">				
+				android:orientation="vertical"
+				android:gravity="center">				
 				<TextView 
 					android:id="@+id/tv_deadline"
+					style="@style/common_text"/>
+				<TextView
+					android:id="@+id/tv_data"					
 					style="@style/common_text"
-					android:layout_marginBottom="17dp"/>
+					android:layout_marginBottom="32dp"/>
+				<LinearLayout
+					android:background="@drawable/round_rect_secondary"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:gravity="center"
+					android:padding="@dimen/dp_1">
 				<TextView
 					android:id="@+id/tv_suggestion"
 					style="@style/common_text"
-					android:layout_marginBottom="17dp"/>
-				<TextView
-					android:id="@+id/tv_data"					
-					style="@style/common_text"/>
+					android:layout_marginBottom="@dimen/dp_1"/>
+				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
 	</LinearLayout>
@@ -54,23 +62,31 @@
 		android:layout_centerInParent="true"
 		android:layout_alignParentBottom="true"
 		android:weightSum="3"
-		android:background="@color/primary">
+		android:background="@color/secondary">
 		
 	</LinearLayout>
-	
-	<Button
-		android:id="@+id/btn_check"
-		android:background="@drawable/button_selector"
-		android:layout_width="87dp"
-		android:layout_height="87dp"
-		android:layout_centerInParent="true"
+	<LinearLayout
+		android:id="@+id/btn_check_wrapper"
+		android:background="@drawable/oval_background"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_alignBottom="@id/nav_bar"
 		android:layout_marginBottom="21dp"
-		android:fontFamily="serif"
-		android:stateListAnimator="@null"
-		android:elevation="0dp"
-		android:text="+"
-		android:textSize="@dimen/large_text"/>
-
+		android:layout_centerInParent="true"
+		android:gravity="center">
+		<Button
+			android:id="@+id/btn_check"
+			android:background="@drawable/oval_selector"
+			android:layout_width="62dp"
+			android:layout_height="62dp"
+			android:layout_margin="@dimen/dp_1"
+			android:stateListAnimator="@null"
+			android:elevation="4dp"
+			android:padding="0dp"
+			android:gravity="center"
+			android:fontFamily="serif"
+			android:text="+"
+			android:textSize="21dp"/>
+	</LinearLayout>
 
 </RelativeLayout>
