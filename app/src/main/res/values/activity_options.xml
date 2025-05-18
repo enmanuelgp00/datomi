@@ -1,0 +1,15 @@
+<resources>
+	<style name="option_wrapper" parent="match_parent_width">
+		<item name="android:padding">@dimen/dp_1</item>
+		<item name="android:orientation">vertical</item>
+	</style>
+
+	<style name="option_item" parent="wrap_content">
+		<item name="android:textSize">@dimen/small_text</item>
+		<item name="android:fontFamily">monospace</item>
+	</style>
+	<style name="option_label" parent="option_item">
+		<item name="android:textSize">@dimen/small_text</item>
+		<item name="android:gravity">left</item>
+	</style>
+</resources>

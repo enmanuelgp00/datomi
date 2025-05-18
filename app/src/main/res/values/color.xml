@@ -1,10 +1,14 @@
 <resources>
-
-	<color name="background">#3f4e4f</color> <!-- dark green -->
-	<color name="primary">#f8d794</color> 
-	<color name="secondary">#122220</color> <!-- darker green -->
-
 	<color name="white">#ffffff</color>
 	<color name="black">#000000</color>
 	<color name="silver">#dddddd</color>
+	<color name="vague">#e8d7a4</color>
+	<color name="wasabi">#809076</color>
+	<color name="emerald_green">#284139</color>
+	<color name="dark_green">#122220</color>
+
+	<color name="background">#3f4e4f</color>
+	<color name="primary">@color/vague</color> 
+	<color name="secondary">@color/dark_green</color>
+
 </resources>

@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,14 +37,29 @@ public class ActivityOptions extends Activity {
 		dateFormatter = new SimpleDateFormat("dd MM yyyy");
 		mobileDataManager = new MobileDataManager(this);
 		dataFormat = mobileDataManager.currentDataFormat();
-		buttonApply = findViewById( R.id.buttonApply );
-		editTextDeadline = findViewById( R.id.editTextDeadline );
+
+		editTextDeadline = findViewById( R.id.edtxt_deadline );
 		chbxDebugMode = findViewById( R.id.chbx_debug_mode );
+		radioGroup = findViewById( R.id.radio_group_data_format );
+
 		if ( mobileDataManager.isDebugModeOn() ) {
 			chbxDebugMode.setChecked( true );
 		}
+
+		chbxDebugMode.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton button, boolean isChecked ) {
+				mobileDataManager.setDebugMode( isChecked );
+				if ( isChecked ) {
+					quickMessage( "Debug mode enabled" );
+				} else {
+					quickMessage( "Debug mode disabled" );
+				}
+			}
+		});
+
 		loadSetting();
-		radioGroup = findViewById(R.id.radio_group_format_data);
+
 	
 		radioGroup.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener(){
 			@Override
@@ -54,25 +70,10 @@ public class ActivityOptions extends Activity {
 				} else {
 					dataFormat.setFormatType(DataFormat.DECIMAL);
 				}
+				updateDataFormat();
 			}
 		});
-
-		buttonApply.setOnClickListener( applyChanges );
 	}
-
-	private View.OnClickListener applyChanges = new View.OnClickListener() {
-		@Override
-		public void onClick(View view) {
-			updateDeadline();
-			updateDataFormat();
-			if ( chbxDebugMode.isChecked() ) {
-				mobileDataManager.enableDebugMode();
-				quickMessage( "Debug Mode enabled" );
-			} else {
-				mobileDataManager.disableDebugMode();
-			}
-		};
-	};
 
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu ) {

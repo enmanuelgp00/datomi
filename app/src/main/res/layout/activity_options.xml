@@ -1,98 +1,62 @@
-<LinearLayout		
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/main"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
+	style="@style/match_parent"
 	android:orientation="vertical"
-	android:gravity="center">
+	android:gravity="center"
+	android:background="@color/background">
 	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center">
-		<LinearLayout
-			android:id="@+id/options_panel"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:gravity="left">
-			<LinearLayout
-				android:id="@+id/panel_date"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content">
-				<TextView
-					android:text="Last combo package:"
-					android:textSize="15sp"
-					android:fontFamily="monospace"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:gravity="center" />
-				<EditText
-					android:id="@+id/editTextDeadline"
-					android:textSize="15sp"
-					android:textColor="#888888"
-					android:hint="dd MM yyyy"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:gravity="center"
-					android:fontFamily="monospace" />
-			</LinearLayout>
-			<LinearLayout
-				android:id="@+id/panel_format_data"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content">
-				<TextView
-					android:text="Format data:"
-					android:textSize="15sp"
-					android:fontFamily="monospace"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:gravity="center" />
-				<RadioGroup
-					android:id="@+id/radio_group_format_data"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:orientation="horizontal">
-					<RadioButton
-						android:id="@+id/radio_button_decimal"
-						android:text="Decimal"
-						android:textSize="15sp"
-						android:textColor="#888888"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:fontFamily="monospace" />
-					<RadioButton
-						android:id="@+id/radio_button_binary"
-						android:text="Binary"
-						android:textSize="15sp"
-						android:textColor="#888888"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:fontFamily="monospace" />
-
-				</RadioGroup>
-			</LinearLayout>
-
-			<!-- Check box debug mode  -->
-			<LinearLayout
-				style="@style/wrap_content">
-				<CheckBox
-					style="@style/wrap_content"
-					android:id="@+id/chbx_debug_mode"/>
-				<TextView
-					style="@style/common_text"
-					android:textColor="@color/black"
-					android:text="Debug Mode"/>
-			</LinearLayout>
-		</LinearLayout>
+		style="@style/option_wrapper"
+		android:orientation="vertical"
+		android:background="@drawable/round_rect_primary"
+		android:layout_marginRight="@dimen/dp_2"
+		android:layout_marginLeft="@dimen/dp_2">
+		
+	<LinearLayout
+		style="@style/option_wrapper">
+		<TextView
+			style="@style/option_label"
+			android:text="PACKAGE COMBO"/>			
+		<EditText
+			android:layout_marginLeft="@dimen/dp_5"
+			style="@style/option_item"
+			android:id="@+id/edtxt_deadline"
+			android:hint="dd MM yyyy"/>
+	</LinearLayout>
+	
+	<LinearLayout
+		style="@style/option_wrapper">
+		<TextView
+			style="@style/option_label"
+			android:text="FORMAT"/>	
+		<RadioGroup
+			android:id="@+id/radio_group_data_format"
+			android:layout_marginLeft="@dimen/dp_5"
+			style="@style/option_item"
+			android:orientation="vertical">
+			<RadioButton
+				style="@style/option_item"
+				android:id="@+id/radio_button_decimal"
+				android:hint="Gb" />
+			<RadioButton
+				style="@style/option_item"
+				android:id="@+id/radio_button_binary"
+				android:hint="Gib"/>
+		</RadioGroup>
 	</LinearLayout>
 
-
-	<Button
-		android:id="@+id/buttonApply"
-		android:hint="Apply"
-		android:fontFamily="monospace"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_margin="10sp" />
-
+	<LinearLayout
+		style="@style/option_wrapper">
+		<TextView
+			style="@style/option_label"
+			android:id="@+id/a"
+			android:text="DEBUG MODE"/>	
+		<CheckBox
+			android:layout_marginLeft="@dimen/dp_5"
+			style="@style/option_item"
+			android:id="@+id/chbx_debug_mode"
+			android:hint="Debug"
+			/>
+	</LinearLayout>
+	</LinearLayout>
 </LinearLayout>

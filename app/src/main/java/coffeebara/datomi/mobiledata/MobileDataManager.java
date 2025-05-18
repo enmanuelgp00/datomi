@@ -28,7 +28,7 @@ public class MobileDataManager {
 	TelephonyManager telephonyManager;
 	TreeSet<String> responseHistory;
 	Calendar deadline;
-	MobileData previousMobileData, todayFirstMobileData, currentMobileData;
+	MobileData todayFirstMobileData, currentMobileData;
 	TreeSet<String> logOfKeys, logOfToday;
 	String keyLogOfToday;
 	
@@ -54,12 +54,12 @@ public class MobileDataManager {
 		currentMobileData = todayFirstMobileData;
 		deadline = getDeadline();
 		if (logOfToday.size() > 0) {
-			previousMobileData = MobileData.parseStringFormat( logOfToday.last(), currentDataFormat() );
+			currentMobileData = MobileData.parseStringFormat( logOfToday.last(), currentDataFormat() );
 		} else if (logOfKeys.size() > 0) {
 			String yesterdayLast = new TreeSet<String>( book.getStringSet(logOfKeys.last(), null) ).last();
-			previousMobileData = MobileData.parseStringFormat( yesterdayLast, currentDataFormat() );
+			currentMobileData = MobileData.parseStringFormat( yesterdayLast, currentDataFormat() );
 		} else {
-			previousMobileData = new MobileData("", 0L, currentDataFormat());
+			currentMobileData = new MobileData("", 0L, currentDataFormat());
 		}
 	}
 
@@ -119,18 +119,9 @@ public class MobileDataManager {
 		return book.getBoolean( Key.DEBUG_MODE , false );
 	}
 	
-	public void enableDebugMode() {
-		if ( !isDebugModeOn() ) {
-			pen.putBoolean( Key.DEBUG_MODE, true )
-				.commit();
-		}
-	}
-	
-	public void disableDebugMode() {
-		if ( isDebugModeOn() ) {
-			pen.putBoolean( Key.DEBUG_MODE, false )
-				.commit();
-		}
+	public void setDebugMode( boolean state ) {
+		pen.putBoolean( Key.DEBUG_MODE, state )
+		.commit();
 	}
 
 	private void store(TreeSet<String> collection, String id, String info) {
@@ -167,20 +158,20 @@ public class MobileDataManager {
 		pen.apply();
 	}
 
-	private void checkDeadline( MobileData currentMobileData ) {
-		if (currentMobileData.getSmsBonus() > previousMobileData.getSmsBonus()) {
+	private void checkDeadline( MobileData mobileData ) {
+		if ( mobileData.getSmsBonus() > currentMobileData.getSmsBonus()) {
 			Calendar newDeadline = Calendar.getInstance();
-			newDeadline.setTime(currentMobileData.getCalendarDate().getTime());
-			newDeadline.add(Calendar.DAY_OF_MONTH, 30);
-			setDeadline(newDeadline);
+			newDeadline.setTime( mobileData.getCalendarDate().getTime());
+			newDeadline.add( Calendar.DAY_OF_MONTH, 30 );
+			setDeadline( newDeadline );
 			Toast.makeText(context, "New deadline established", Toast.LENGTH_LONG).show();
 		}
-		previousMobileData = currentMobileData;
+		currentMobileData = mobileData;
 	}
 
 	public int getDaysTillDeadline() {
 		long pointedDayMillis = getDeadline().getTimeInMillis();
-		long currentDayMillis = previousMobileData.getCalendarDate().getTimeInMillis();
+		long currentDayMillis = currentMobileData.getCalendarDate().getTimeInMillis();
 		long diffDaysMillis = pointedDayMillis - currentDayMillis;
 		return (int) (diffDaysMillis / (1000 * 60 * 60 * 24));
 	}
@@ -205,9 +196,15 @@ public class MobileDataManager {
 			return null;
 		}
 	}
+
 	public MobileData getTodayCurrentMobileData() {
-		return previousMobileData;
+		if ( getTodayFirstMobileData() != null ) {
+			return currentMobileData;			
+		} else {
+			return null;
+		}
 	}
+
 	public String getKeyOfToday() {
 		Calendar currentDate = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy MM dd");
@@ -219,7 +216,9 @@ public class MobileDataManager {
 	}
 
 	public long getTodaySuggestionTillDeadline() {
-		return todayFirstMobileData.getDataBytes() / getDaysTillDeadline() ;
+	//	return todayFirstMobileData.getDataBytes() / getDaysTillDeadline() ;
+		return getTodayLargerMobileData().getDataBytes() / getDaysTillDeadline() ;
+
 	}
 
 	public MobileData getTodayLargerMobileData() {
@@ -234,12 +233,12 @@ public class MobileDataManager {
 		
 		long savedDataBytesUsed = book.getLong( Key.DATA_BYTES_USED, 0L );
 		long todayDataBytesUsed = 0 ;
-		MobileData todayFirstMobileData;
+		MobileData todayLargerMobileData;
 
-		if ( ( todayFirstMobileData = getTodayFirstMobileData() ) == null ) {
+		if ( ( todayLargerMobileData = getTodayLargerMobileData() ) == null ) {
 			todayDataBytesUsed = 0L;
 		} else {
-			todayDataBytesUsed = todayFirstMobileData.getDataBytes() - previousMobileData.getDataBytes();
+			todayDataBytesUsed = todayLargerMobileData.getDataBytes() - getTodayCurrentMobileData().getDataBytes();
 		} 
 
 		long currentMobileTraffic = TrafficStats.getMobileTxBytes() + TrafficStats.getMobileRxBytes();
@@ -274,6 +273,7 @@ public class MobileDataManager {
 	public long getDataBytesOffset() {
 		return book.getLong( Key.TRAFFIC_TOTAL, 0L ) - book.getLong( Key.TRAFFIC_REFERENCE, 0L);
 	}
+
 //	Cleaning
 
 	public void clearAllData() {

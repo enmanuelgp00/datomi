@@ -1,0 +1,5 @@
+<resources>
+	<style name="retro_bar" parent="common_text">
+		<item name="android:layout_marginBottom">32dp</item>
+	</style>
+</resources>

@@ -34,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.util.TypedValue;
+import android.net.TrafficStats; 
 
 import java.util.Calendar;
 import java.util.ArrayList;
@@ -49,12 +50,19 @@ public class ActivityMain extends Activity {
 	MobileDataManager mobileDataManager;
 	TextView textViewDeadline,
 		textViewDays,
-		textViewSuggestion,
 		textViewDinamicSuggestion,
-		textViewData,
-		textViewDaysLabel;
+		textViewTotalData,
+		textViewDaysLabel,
+		tvDataSent,
+		tvDataReceived;
+		
+	TextView[] tv_collection;
+	
 	Button btnCheck;
 	Handler handler = new Handler(Looper.getMainLooper());
+	
+	long prevTotalDataSent = 0;
+	long prevTotalDataReceived = -1;
 	
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);		
@@ -62,12 +70,18 @@ public class ActivityMain extends Activity {
 		mobileDataManager = new MobileDataManager(this);
 
 		handlePermissions();
+		tv_collection = new TextView [] {
+			textViewDays = findViewById(R.id.tv_days), 
+			textViewDaysLabel = findViewById(R.id.tv_days_label),
+			textViewDeadline = findViewById(R.id.tv_deadline),
+			textViewTotalData = findViewById(R.id.tv_total_data),
+			textViewDinamicSuggestion = findViewById( R.id.tv_dinamic_suggestion ),
+			tvDataSent = findViewById( R.id.tv_data_sent ),
+			tvDataReceived = findViewById( R.id.tv_data_received )
+		};
 		
-		textViewDays = findViewById(R.id.tv_days);
-		textViewDaysLabel = findViewById(R.id.tv_days_label);
-		textViewDeadline = findViewById(R.id.tv_deadline);
-		textViewSuggestion = findViewById(R.id.tv_suggestion);
-		textViewDinamicSuggestion = new TextView( this );
+		/*
+		//new TextView( this );
 		textViewDinamicSuggestion.setLayoutParams( new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT )
@@ -75,11 +89,10 @@ public class ActivityMain extends Activity {
 		textViewDinamicSuggestion.setTypeface( Typeface.MONOSPACE ); // fontFamily
 		textViewDinamicSuggestion.setTextColor( Color.parseColor("#ffffff") );
 		textViewDinamicSuggestion.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 15);
-		((LinearLayout) textViewSuggestion.getParent()) .addView( textViewDinamicSuggestion );
-		
-		textViewData = findViewById(R.id.tv_data);
-		btnCheck = findViewById(R.id.btn_check);
+		((LinearLayout) textViewTotalData.getParent()) .addView( textViewDinamicSuggestion );
+		*/
 
+		btnCheck = findViewById(R.id.btn_check);
 		btnCheck.setOnClickListener( checkData() );
 
 		/*
@@ -213,106 +226,85 @@ public class ActivityMain extends Activity {
 			int barProgress = (int) ( (double) totalUsed / initialSuggestion * BAR_SIZE );
 			int remainingDays = mobileDataManager.getDaysTillDeadline();
 
+
 			textViewDays.setText(String.format("%d", remainingDays));
 			textViewDaysLabel.setText( remainingDays > 1 ? "days" : "day" );
 
-			textViewDeadline.setText(String.format("  %" + BAR_SIZE + "s\n  %" + ( BAR_SIZE - remainingDays + 1 ) + "d\n%s\n", 
+			int progressDays = BAR_SIZE - remainingDays;
+
+			textViewDeadline.setText(String.format("  %" + BAR_SIZE + "s\n  %" + ( progressDays ) + "d\n%s", 
 				simpleDateFormatter.format( mobileDataManager.getDeadline().getTime() ),
 				remainingDays,
-				reverseRetroBar( BAR_SIZE, BAR_SIZE - remainingDays )
-			));
-
-			textViewSuggestion.setText( String.format("  %"+ ( barProgress <= BAR_SIZE ? barProgress + 1 : BAR_SIZE ) +"s \n%s\n  %" + ( BAR_SIZE ) + "s",
-				dataFormatter.format( totalUsed ),
-				retroBar( BAR_SIZE , barProgress ),
-				dataFormatter.format( initialSuggestion )
+				retroBar( BAR_SIZE, BAR_SIZE - remainingDays, '.', '#')
 			));
 			
-
-			if ( totalUsed > initialSuggestion ) {
-				long dinamicBytes = initialBytes;
-				long dinamicUsed = totalUsed ;
-				long dinamicSuggestion = initialSuggestion;
-				while ( dinamicUsed > dinamicSuggestion ) {
-					dinamicBytes -= dinamicSuggestion;
-					dinamicSuggestion = ( dinamicBytes ) / remainingDays ;
-					dinamicUsed = dinamicUsed - dinamicSuggestion ;
-				}
-
-				int dinamicProgress = ( int ) (( double ) dinamicUsed / dinamicSuggestion  * BAR_SIZE );
-
-				textViewDinamicSuggestion.setText( String.format("  %"+ ( dinamicProgress <= BAR_SIZE ? dinamicProgress + 1 : BAR_SIZE ) +"s \n%s\n  %" + ( BAR_SIZE ) + "s",
-					dataFormatter.format( dinamicUsed ),
-					retroBar( BAR_SIZE , dinamicProgress ),
-					dataFormatter.format( dinamicSuggestion )
-				));
-			}
 			
-
-
 			int progressTillCero = BAR_SIZE - (int)( (float) remainingBytes / initialBytes * BAR_SIZE );
+			String initialBytesAndTotalUsed = String.format( "%s (%s)" , dataFormatter.format( initialBytes ), dataFormatter.format( totalUsed ) );
 
-			textViewData.setText( String.format("  %" + ( progressTillCero + 1 ) + "s\n%s\n  %-"+ ( BAR_SIZE / 2 ) +"s%"+ ( BAR_SIZE / 2 ) +"s" ,
+			textViewTotalData.setText( String.format("  %" + ( progressTillCero + 1 ) + "s\n%s\n  %s%"+ ( BAR_SIZE - initialBytesAndTotalUsed.length() ) +"s" ,
 				dataFormatter.format( remainingBytes ),
-				reverseRetroBar( BAR_SIZE,  progressTillCero ),
-				dataFormatter.format( initialBytes ),
+				retroBar( BAR_SIZE,  progressTillCero, '.', '#'),
+				initialBytesAndTotalUsed,
 				dataFormatter.format( 0 )
 				)
 			);
 
+			long dinamicBytes = initialBytes;
+			long dinamicUsed = totalUsed ;
+			long dinamicSuggestion = initialSuggestion;
+			
+			while ( dinamicUsed > dinamicSuggestion ) {
+				dinamicBytes -= dinamicSuggestion;
+				dinamicSuggestion = ( dinamicBytes ) / remainingDays ;
+				dinamicUsed = dinamicUsed - dinamicSuggestion ;
+			}
+			
+			int dinamicProgress = ( int ) (( double ) dinamicUsed / dinamicSuggestion  * BAR_SIZE );
+			textViewDinamicSuggestion.setText( String.format("  %"+ ( dinamicProgress <= BAR_SIZE ? dinamicProgress + 1 : BAR_SIZE ) +"s \n%s\n  %" + ( BAR_SIZE ) + "s",
+				dataFormatter.format( dinamicUsed ),
+				retroBar( BAR_SIZE , dinamicProgress, '#', '.' ),
+				dataFormatter.format( dinamicSuggestion )
+			));
+			
+			tvDataSent.setText( String.format("%10s/s", dataFormatter.format( getCurrentDataSent()) ) );
+			tvDataReceived.setText( String.format("%10s/s", dataFormatter.format( getCurrentDataReceived()) ) );
+
 		} else {
-			textViewDays.setText("");
-			textViewDaysLabel.setText("");
-			textViewDeadline.setText("");
-			textViewSuggestion.setText("");
-			textViewDinamicSuggestion.setText("");
-			textViewData.setText("Press the button [ " + btnCheck.getText() + " ] to record data");
+			for ( TextView tv : tv_collection ) {
+				tv.setText("");
+			}
+			textViewTotalData.setText("Press the button [ " + btnCheck.getText() + " ] to record data");
 		}
 	}
-
 	
-
-	String retroBar ( int length, int progress ) {
-		StringBuilder bar = new StringBuilder();
-		
-		String errorMessage = " ( Overload ) ";
-		char progressChar = '#' ;
-		char freeSpaceChar = '.' ;
-		int freeSpace = length - progress ;
-		bar.append("[ ");
-
-		if ( progress > length ) {
-			progressChar = ':';
-			int spaceAside = ( length - errorMessage.length() ) / 2 ;
-			StringBuilder aside = new StringBuilder();
-			for (int i = 0; i < spaceAside; i++ ) {
-				aside.append( progressChar );
-			}
-			bar.append( aside.toString() );
-			bar.append( errorMessage );
-			bar.append( aside.toString() );
-		} else {
-			for ( int i = 0; i < progress; i++) {
-				bar.append( progressChar );
-			}
-			for ( int i = 0; i < freeSpace ; i++) {
-				bar.append( freeSpaceChar );
-			}
+	long getCurrentDataSent() {
+		long tx = TrafficStats.getMobileTxBytes();
+		long currentDataSent = 0;
+		if ( prevTotalDataSent != 0 ) {
+			currentDataSent = tx - prevTotalDataSent;
 		}
-		bar.append(" ]");
-		return bar.toString();
+		prevTotalDataSent = tx;
+		return currentDataSent;
 	}
-
-	String reverseRetroBar ( int length, int progress ) {
+	
+	long getCurrentDataReceived() {
+		long rx = TrafficStats.getMobileRxBytes();
+		long currentDataReceived = 0;
+		if ( prevTotalDataReceived != 0 ) {
+			currentDataReceived = rx - prevTotalDataReceived;
+		}
+		prevTotalDataReceived= rx;
+		return currentDataReceived;
+	}
+	
+	String retroBar ( int length, int progress, char progressChar, char freeSpaceChar ) {
 		StringBuilder bar = new StringBuilder();
-		
-		String errorMessage = " ( Overload ) ";
-		char progressChar = '.' ;
-		char freeSpaceChar = '#' ;
+		String errorMessage = " ( fail ) ";
 		int freeSpace = length - progress ;
 		bar.append("[ ");
 
-		if ( progress > length ) {
+		if ( progress >= length ) {
 			progressChar = ':';
 			int spaceAside = ( length - errorMessage.length() ) / 2 ;
 			StringBuilder aside = new StringBuilder();
