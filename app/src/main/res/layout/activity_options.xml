@@ -9,31 +9,37 @@
 		style="@style/option_wrapper"
 		android:orientation="vertical"
 		android:background="@drawable/round_rect_primary"
+		android:gravity="center"
 		android:layout_marginRight="@dimen/dp_2"
 		android:layout_marginLeft="@dimen/dp_2">
 		
-	<LinearLayout
-		style="@style/option_wrapper">
+	<GridLayout
+		style="@style/wrap_content"
+		android:columnCount="2"
+		android:rowCount="6">
 		<TextView
 			style="@style/option_label"
-			android:text="PACKAGE COMBO"/>			
+			android:text="PACKAGE COMBO"
+			android:layout_column="0"
+			android:layout_row="0"/>			
 		<EditText
-			android:layout_marginLeft="@dimen/dp_5"
+			android:layout_column="1"
+			android:layout_row="1"
 			style="@style/option_item"
 			android:id="@+id/edtxt_deadline"
 			android:hint="dd MM yyyy"/>
-	</LinearLayout>
 	
-	<LinearLayout
-		style="@style/option_wrapper">
 		<TextView
+			android:layout_column="0"
+			android:layout_row="2"
 			style="@style/option_label"
 			android:text="FORMAT"/>	
 		<RadioGroup
 			android:id="@+id/radio_group_data_format"
-			android:layout_marginLeft="@dimen/dp_5"
+			android:layout_column="1"
+			android:layout_row="3"
 			style="@style/option_item"
-			android:orientation="vertical">
+			android:orientation="horizontal">
 			<RadioButton
 				style="@style/option_item"
 				android:id="@+id/radio_button_decimal"
@@ -43,20 +49,25 @@
 				android:id="@+id/radio_button_binary"
 				android:hint="Gib"/>
 		</RadioGroup>
-	</LinearLayout>
 
-	<LinearLayout
-		style="@style/option_wrapper">
 		<TextView
 			style="@style/option_label"
 			android:id="@+id/a"
-			android:text="DEBUG MODE"/>	
-		<CheckBox
-			android:layout_marginLeft="@dimen/dp_5"
+			android:text="DEBUG MODE"
+			android:layout_column="0"
+			android:layout_row="4"/>
+		<TextView
+			style="@style/common_text"
+			android:id="@+id/a"
+			android:text="Enable debug mode"
+			android:layout_column="0"
+			android:layout_row="5"/>	
+		<Switch
+			android:layout_column="1"
+			android:layout_row="5"
 			style="@style/option_item"
 			android:id="@+id/chbx_debug_mode"
-			android:hint="Debug"
 			/>
-	</LinearLayout>
+	</GridLayout>
 	</LinearLayout>
 </LinearLayout>

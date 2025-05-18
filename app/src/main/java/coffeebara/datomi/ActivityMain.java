@@ -59,10 +59,10 @@ public class ActivityMain extends Activity {
 	TextView[] tv_collection;
 	
 	Button btnCheck;
-	Handler handler = new Handler(Looper.getMainLooper());
+	Handler handler = new Handler( Looper.getMainLooper() );
 	
 	long prevTotalDataSent = 0;
-	long prevTotalDataReceived = -1;
+	long prevTotalDataReceived = 0;
 	
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);		
@@ -154,7 +154,7 @@ public class ActivityMain extends Activity {
 	public boolean onOptionsItemSelected(MenuItem menuItem) {
 		switch(menuItem.getItemId()) {
 			case R.id.menu_options:
-				startActivity(new Intent(ActivityMain.this, ActivityOptions.class));
+				startActivity(new Intent(ActivityMain.this, ActivitySettings.class));
 				break;
 			case R.id.menu_history:
 				startActivity(new Intent(getApplicationContext(), ActivityHistory.class));

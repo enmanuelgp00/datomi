@@ -1,0 +1,31 @@
+<resources>
+	<style name="settings_button" parent="wrap_content">
+		<item name="android:layout_alignParentRight">true</item>
+		<item name="android:layout_centerInParent">true</item>
+		<item name="android:padding">@dimen/dp_1</item>
+	</style>
+
+	<style name="settings_title" parent="wrap_content">
+		<item name="android:paddingLeft">@dimen/dp_1</item>
+		<item name="android:textSize">@dimen/small_text</item>
+	</style>
+
+	<style name="settings_description" parent="wrap_content">
+		<item name="android:textSize">@dimen/small_text</item>
+	</style>
+
+	<style name="settings_description_title" parent="wrap_content">
+		<item name="android:textSize">17dp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="settings_description_wrapper" parent="wrap_content">
+		<item name="android:padding">@dimen/dp_1</item>
+		<item name="android:orientation">vertical</item>
+	</style>
+
+	<style name="settings_wrapper" parent="match_parent_width">
+		<item name="android:padding">@dimen/dp_1</item>
+		<item name="android:orientation">vertical</item>
+	</style>
+</resources>

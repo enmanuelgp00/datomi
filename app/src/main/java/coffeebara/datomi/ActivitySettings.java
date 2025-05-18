@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ import android.view.View;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class ActivityOptions extends Activity {
+public class ActivitySettings extends Activity {
 	private EditText editTextDeadline; 
 	private Button buttonApply;
 	private MobileDataManager mobileDataManager;
@@ -29,22 +30,59 @@ public class ActivityOptions extends Activity {
 	private RadioButton radioButton;
 	private DataFormat dataFormat;
 	private CheckBox chbxDebugMode;
+	private Switch 
+		switchBinaryFormat,
+		switchDebugMode;
 	
 	public void onCreate(Bundle savedState) {
 		super.onCreate( savedState );
-		setContentView( R.layout.activity_options );
+		setContentView( R.layout.activity_settings );
 
 		dateFormatter = new SimpleDateFormat("dd MM yyyy");
+
 		mobileDataManager = new MobileDataManager(this);
 		dataFormat = mobileDataManager.currentDataFormat();
 
-		editTextDeadline = findViewById( R.id.edtxt_deadline );
-		chbxDebugMode = findViewById( R.id.chbx_debug_mode );
-		radioGroup = findViewById( R.id.radio_group_data_format );
+		switchDebugMode = findViewById( R.id.switch_debug_mode );
+		switchBinaryFormat = findViewById( R.id.switch_binary_format );
 
 		if ( mobileDataManager.isDebugModeOn() ) {
-			chbxDebugMode.setChecked( true );
+			switchDebugMode.setChecked( true );
 		}
+		if ( dataFormat.getFormatType() == DataFormat.BINARY ) {
+			switchBinaryFormat.setChecked( true );
+		}
+		
+		switchDebugMode.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton button, boolean isChecked ) {
+				mobileDataManager.setDebugMode( isChecked );
+				if ( isChecked ) {
+					quickMessage( "Debug mode enabled" );
+				} else {
+					quickMessage( "Debug mode disabled" );
+				}
+			}
+		});
+
+		switchBinaryFormat.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton button, boolean isChecked ) {
+				if ( isChecked ) {
+					dataFormat.setFormatType( DataFormat.BINARY );
+				} else {
+					dataFormat.setFormatType( DataFormat.DECIMAL );
+				}
+				mobileDataManager.setDataFormat(dataFormat);
+			}
+		});
+
+
+/*
+
+	//	editTextDeadline = findViewById( R.id.edtxt_deadline );
+		//chbxDebugMode = findViewById( R.id.chbx_debug_mode );
+		radioGroup = findViewById( R.id.radio_group_data_format );
 
 		chbxDebugMode.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
 			@Override
@@ -57,7 +95,6 @@ public class ActivityOptions extends Activity {
 				}
 			}
 		});
-
 		loadSetting();
 
 	
@@ -73,6 +110,7 @@ public class ActivityOptions extends Activity {
 				updateDataFormat();
 			}
 		});
+*/
 	}
 
 	@Override
@@ -98,14 +136,13 @@ public class ActivityOptions extends Activity {
 			calendarDate.setTime(dateFormatter.parse(editTextDeadline.getText().toString()));
 			calendarDate.add(Calendar.DAY_OF_MONTH, 30);
 			mobileDataManager.setDeadline(calendarDate);
-			Toast.makeText(ActivityOptions.this, verbose.format(calendarDate.getTime()), Toast.LENGTH_SHORT).show();
+			Toast.makeText( this, verbose.format(calendarDate.getTime()), Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 			
 		}
 	}
 
-	void updateDataFormat() {
-		mobileDataManager.setDataFormat(dataFormat);		
+	void updateDataFormat() {		
 	}
 
 	void loadSetting(){		
@@ -113,14 +150,6 @@ public class ActivityOptions extends Activity {
 		initialCalendarDate = mobileDataManager.getDeadline();
 		initialCalendarDate.add(Calendar.DAY_OF_MONTH, -30);
 		editTextDeadline.setText(dateFormatter.format(initialCalendarDate.getTime()));
-
-		if (dataFormat.getFormatType() == DataFormat.BINARY) {
-			radioButton = findViewById(R.id.radio_button_binary);
-			radioButton.setChecked(true);
-		} else {
-			radioButton = findViewById(R.id.radio_button_decimal);
-			radioButton.setChecked(true);
-		}
 	}
 	
 	private void quickMessage( String message ) {

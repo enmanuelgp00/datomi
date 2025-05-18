@@ -33,6 +33,7 @@
 					android:id="@+id/tv_days"
 					style="@style/common_text"
 					android:fontFamily="serif"
+					android:textStyle="bold"
 					android:textSize="@dimen/big_text"/>
 				<TextView
 					style="@style/common_text"
@@ -70,7 +71,8 @@
 						android:layout_row="0"
 						android:layout_column="0"
 						android:id="@+id/tv_data_received"
-						android:text="0.00 kb"/>
+						android:text="0.00 kb"
+						android:layout_marginRight="@dimen/dp_1"/>
 					<TextView
 						style="@style/common_text"
 						android:layout_row="0"
