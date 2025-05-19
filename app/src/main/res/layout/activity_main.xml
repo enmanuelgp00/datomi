@@ -38,7 +38,6 @@
 				<TextView
 					style="@style/common_text"
 					android:id="@+id/tv_days_label"
-					android:fontFamily="serif"
 					android:layout_marginLeft="@dimen/dp_1"/>
 			</LinearLayout>
 			

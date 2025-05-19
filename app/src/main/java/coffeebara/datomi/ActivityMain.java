@@ -228,25 +228,24 @@ public class ActivityMain extends Activity {
 
 
 			textViewDays.setText(String.format("%d", remainingDays));
-			textViewDaysLabel.setText( remainingDays > 1 ? "days" : "day" );
+			textViewDaysLabel.setText( remainingDays > 1 ? "days left" : "day left" );
 
 			int progressDays = BAR_SIZE - remainingDays;
 
-			textViewDeadline.setText(String.format("  %" + BAR_SIZE + "s\n  %" + ( progressDays ) + "d\n%s", 
+			textViewDeadline.setText(String.format("  %"+ ( BAR_SIZE ) +"s\n  %" + ( progressDays == 0 ? "" : progressDays ) + "d\n%s",
 				simpleDateFormatter.format( mobileDataManager.getDeadline().getTime() ),
-				remainingDays,
-				retroBar( BAR_SIZE, BAR_SIZE - remainingDays, '.', '#')
+				progressDays,
+				retroBar( BAR_SIZE, BAR_SIZE - remainingDays, '#', '.')
 			));
 			
 			
 			int progressTillCero = BAR_SIZE - (int)( (float) remainingBytes / initialBytes * BAR_SIZE );
-			String initialBytesAndTotalUsed = String.format( "%s (%s)" , dataFormatter.format( initialBytes ), dataFormatter.format( totalUsed ) );
+			String remainingBytesStr = dataFormatter.format( remainingBytes );
+			int justification = progressTillCero + remainingBytesStr.length();
 
-			textViewTotalData.setText( String.format("  %" + ( progressTillCero + 1 ) + "s\n%s\n  %s%"+ ( BAR_SIZE - initialBytesAndTotalUsed.length() ) +"s" ,
-				dataFormatter.format( remainingBytes ),
-				retroBar( BAR_SIZE,  progressTillCero, '.', '#'),
-				initialBytesAndTotalUsed,
-				dataFormatter.format( 0 )
+			textViewTotalData.setText( String.format("  %" + ( justification > BAR_SIZE ? BAR_SIZE : justification ) + "s\n%s" ,
+				remainingBytesStr,
+				retroBar( BAR_SIZE,  progressTillCero, '.', '#')
 				)
 			);
 
@@ -261,10 +260,12 @@ public class ActivityMain extends Activity {
 			}
 			
 			int dinamicProgress = ( int ) (( double ) dinamicUsed / dinamicSuggestion  * BAR_SIZE );
-			textViewDinamicSuggestion.setText( String.format("  %"+ ( dinamicProgress <= BAR_SIZE ? dinamicProgress + 1 : BAR_SIZE ) +"s \n%s\n  %" + ( BAR_SIZE ) + "s",
-				dataFormatter.format( dinamicUsed ),
-				retroBar( BAR_SIZE , dinamicProgress, '#', '.' ),
-				dataFormatter.format( dinamicSuggestion )
+			String remainingBytesSuggestionStr = dataFormatter.format( dinamicSuggestion - dinamicUsed );
+			justification = dinamicProgress + remainingBytesSuggestionStr.length();
+
+			textViewDinamicSuggestion.setText( String.format("  %"+ ( justification > BAR_SIZE ? BAR_SIZE : justification ) +"s \n%s",
+				remainingBytesSuggestionStr,
+				retroBar( BAR_SIZE , dinamicProgress, '.', '#' )
 			));
 			
 			tvDataSent.setText( String.format("%10s/s", dataFormatter.format( getCurrentDataSent()) ) );
