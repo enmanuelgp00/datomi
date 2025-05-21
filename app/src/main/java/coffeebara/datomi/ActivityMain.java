@@ -228,7 +228,7 @@ public class ActivityMain extends Activity {
 
 
 			textViewDays.setText(String.format("%d", remainingDays));
-			textViewDaysLabel.setText( remainingDays > 1 ? "days left" : "day left" );
+			textViewDaysLabel.setText( remainingDays > 1 ? "days" : "day" );
 
 			int progressDays = BAR_SIZE - remainingDays;
 

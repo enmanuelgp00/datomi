@@ -4,7 +4,8 @@
 	android:orientation="vertical">
 	
 	<LinearLayout
-		style="@style/settings_wrapper">
+		style="@style/settings_wrapper"
+		android:id="@+id/deadline_wrapper">
 		<TextView
 			style="@style/settings_title"
 			android:text="Deadline"/>

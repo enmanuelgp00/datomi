@@ -4,36 +4,29 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import coffeebara.datomi.mobiledata.*;
-import android.widget.LinearLayout;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.RadioButton;
-import android.widget.Toast;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.*;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ActivitySettings extends Activity {
+	private CalendarUI calendarUI;
 	private EditText editTextDeadline; 
-	private Button buttonApply;
 	private MobileDataManager mobileDataManager;
 	private SimpleDateFormat dateFormatter;
-	private RadioGroup radioGroup;
-	private RadioButton radioButton;
 	private DataFormat dataFormat;
-	private CheckBox chbxDebugMode;
 	private Switch 
 		switchBinaryFormat,
 		switchDebugMode;
-	
+	private ViewGroup deadlineWrapper;
+	private boolean isCalendarDisplayed = false ;
+
 	public void onCreate(Bundle savedState) {
 		super.onCreate( savedState );
 		setContentView( R.layout.activity_settings );
@@ -43,8 +36,22 @@ public class ActivitySettings extends Activity {
 		mobileDataManager = new MobileDataManager(this);
 		dataFormat = mobileDataManager.currentDataFormat();
 
+		deadlineWrapper = findViewById( R.id.deadline_wrapper );
+		switchBinaryFormat = findViewById( R.id.switch_binary_format );				
 		switchDebugMode = findViewById( R.id.switch_debug_mode );
-		switchBinaryFormat = findViewById( R.id.switch_binary_format );
+		calendarUI = new CalendarUI( this );
+		
+		//ViewGroup calendarWrapper = ( ViewGroup ) getNearLinearParent(switchDebugMode); //.getParent()).getParent();
+
+		deadlineWrapper.setOnClickListener( new View.OnClickListener() {
+			@Override
+			public void onClick( View view ) {
+				if ( !isCalendarDisplayed ) {
+					deadlineWrapper.addView( calendarUI );
+				}
+				isCalendarDisplayed = true;
+			}
+		} );
 
 		if ( mobileDataManager.isDebugModeOn() ) {
 			switchDebugMode.setChecked( true );
@@ -58,9 +65,7 @@ public class ActivitySettings extends Activity {
 			public void onCheckedChanged(CompoundButton button, boolean isChecked ) {
 				mobileDataManager.setDebugMode( isChecked );
 				if ( isChecked ) {
-					quickMessage( "Debug mode enabled" );
 				} else {
-					quickMessage( "Debug mode disabled" );
 				}
 			}
 		});
@@ -77,40 +82,6 @@ public class ActivitySettings extends Activity {
 			}
 		});
 
-
-/*
-
-	//	editTextDeadline = findViewById( R.id.edtxt_deadline );
-		//chbxDebugMode = findViewById( R.id.chbx_debug_mode );
-		radioGroup = findViewById( R.id.radio_group_data_format );
-
-		chbxDebugMode.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton button, boolean isChecked ) {
-				mobileDataManager.setDebugMode( isChecked );
-				if ( isChecked ) {
-					quickMessage( "Debug mode enabled" );
-				} else {
-					quickMessage( "Debug mode disabled" );
-				}
-			}
-		});
-		loadSetting();
-
-	
-		radioGroup.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener(){
-			@Override
-			public void onCheckedChanged(RadioGroup radioGroup, int checkedId){
-				
-				if (checkedId == R.id.radio_button_binary) {
-					dataFormat.setFormatType(DataFormat.BINARY);
-				} else {
-					dataFormat.setFormatType(DataFormat.DECIMAL);
-				}
-				updateDataFormat();
-			}
-		});
-*/
 	}
 
 	@Override
@@ -142,9 +113,6 @@ public class ActivitySettings extends Activity {
 		}
 	}
 
-	void updateDataFormat() {		
-	}
-
 	void loadSetting(){		
 		Calendar initialCalendarDate = Calendar.getInstance();
 		initialCalendarDate = mobileDataManager.getDeadline();
@@ -152,8 +120,10 @@ public class ActivitySettings extends Activity {
 		editTextDeadline.setText(dateFormatter.format(initialCalendarDate.getTime()));
 	}
 	
-	private void quickMessage( String message ) {
-		Toast.makeText( this, message, Toast.LENGTH_SHORT ).show();
-	}
-
+	public LinearLayout getNearLinearParent( View view ) {
+		if ( !( view.getParent() instanceof LinearLayout ) ) {
+			return getNearLinearParent( ( View ) view.getParent() );
+		}		
+		return (LinearLayout) view.getParent() ;
+	}	
 }

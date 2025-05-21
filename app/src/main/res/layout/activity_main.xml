@@ -61,24 +61,19 @@
 					style="@style/retro_bar"/>
 
 				<!-- current sent and received data  -->
-				<GridLayout
+				<LinearLayout
 					style="@style/match_parent_width"
-					android:rowCount="1"
-					android:columnCount="2">
+					android:gravity="right">
 					<TextView
 						style="@style/common_text"
-						android:layout_row="0"
-						android:layout_column="0"
 						android:id="@+id/tv_data_received"
 						android:text="0.00 kb"
 						android:layout_marginRight="@dimen/dp_1"/>
 					<TextView
 						style="@style/common_text"
-						android:layout_row="0"
-						android:layout_column="1"
 						android:id="@+id/tv_data_sent" 
 						android:text="0.00 kb"/>
-				</GridLayout>
+				</LinearLayout>
 
 			</LinearLayout> <!-- bar system information -->
 			
