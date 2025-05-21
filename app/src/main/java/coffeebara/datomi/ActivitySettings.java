@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import coffeebara.datomi.mobiledata.*;
 import android.widget.*;
+import android.graphics.Color;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,15 +40,29 @@ public class ActivitySettings extends Activity {
 		deadlineWrapper = findViewById( R.id.deadline_wrapper );
 		switchBinaryFormat = findViewById( R.id.switch_binary_format );				
 		switchDebugMode = findViewById( R.id.switch_debug_mode );
-		calendarUI = new CalendarUI( this );
-		
-		//ViewGroup calendarWrapper = ( ViewGroup ) getNearLinearParent(switchDebugMode); //.getParent()).getParent();
+		calendarUI = new CalendarUI( this , new CalendarUI.OnSubmit() {
+			@Override
+			public void onDone( Calendar date ) {
+				Calendar deadline = ( Calendar ) date.clone();
+				deadline.add( Calendar.DAY_OF_MONTH, 30 );
+				mobileDataManager.setDeadline( deadline );
+				Toast.makeText( ActivitySettings.this, new SimpleDateFormat("EE dd MMMM yyyy").format( deadline.getTimeInMillis() ), Toast.LENGTH_SHORT ).show();
+			}
+			public void onCancel() {
+				isCalendarDisplayed = false;
+			}
+		});
+		RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams( RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT );
+		relativeParams.addRule( RelativeLayout.ALIGN_PARENT_BOTTOM );
+		calendarUI.setLayoutParams( relativeParams );
+		RelativeLayout absoluteParent = findViewById( R.id.main_wrapper );
+		calendarUI.setBackgroundColor( Color.parseColor( "#fdfdfd" ) );
 
 		deadlineWrapper.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick( View view ) {
 				if ( !isCalendarDisplayed ) {
-					deadlineWrapper.addView( calendarUI );
+					absoluteParent.addView( calendarUI );
 				}
 				isCalendarDisplayed = true;
 			}
@@ -99,27 +114,13 @@ public class ActivitySettings extends Activity {
 		}
 		return super.onOptionsItemSelected(menuItem);
 	}
-
-	void updateDeadline() {
-		try {
-			Calendar calendarDate = Calendar.getInstance();
-			SimpleDateFormat verbose = new SimpleDateFormat("EEEE dd MMMM yyyy");
-			calendarDate.setTime(dateFormatter.parse(editTextDeadline.getText().toString()));
-			calendarDate.add(Calendar.DAY_OF_MONTH, 30);
-			mobileDataManager.setDeadline(calendarDate);
-			Toast.makeText( this, verbose.format(calendarDate.getTime()), Toast.LENGTH_SHORT).show();
-		} catch (Exception e) {
-			
+	public ViewGroup getAbsoluteParent( View view ) {
+		View parent = ( View ) view.getParent();
+		if ( parent != null ) {
+			return getAbsoluteParent( parent );
 		}
+		return ( ViewGroup ) view;
 	}
-
-	void loadSetting(){		
-		Calendar initialCalendarDate = Calendar.getInstance();
-		initialCalendarDate = mobileDataManager.getDeadline();
-		initialCalendarDate.add(Calendar.DAY_OF_MONTH, -30);
-		editTextDeadline.setText(dateFormatter.format(initialCalendarDate.getTime()));
-	}
-	
 	public LinearLayout getNearLinearParent( View view ) {
 		if ( !( view.getParent() instanceof LinearLayout ) ) {
 			return getNearLinearParent( ( View ) view.getParent() );

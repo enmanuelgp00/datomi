@@ -1,69 +1,73 @@
-<LinearLayout
+<RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	style="@style/match_parent"
-	android:orientation="vertical">
-	
+	android:id="@+id/main_wrapper"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 	<LinearLayout
-		style="@style/settings_wrapper"
-		android:id="@+id/deadline_wrapper">
-		<TextView
-			style="@style/settings_title"
-			android:text="Deadline"/>
-		<RelativeLayout
-			style="@style/match_parent_width">
-			<LinearLayout
+		style="@style/match_parent"
+		android:orientation="vertical">	
+		<LinearLayout
+			style="@style/settings_wrapper"
+			android:id="@+id/deadline_wrapper">
+			<TextView
+				style="@style/settings_title"
+				android:text="Deadline"/>
+			<RelativeLayout
+				style="@style/match_parent_width">
+				<LinearLayout
 					style="@style/settings_description_wrapper">
-				<TextView
-					style="@style/settings_description_title" 
-					android:text="Change deadline"/>
-				<TextView
-					style="@style/settings_description" 
-					android:text="from the last package combo date"/>
-			</LinearLayout>
-		</RelativeLayout>
-	</LinearLayout>
+					<TextView
+						style="@style/settings_description_title" 
+						android:text="Change deadline"/>	
+					<TextView
+						style="@style/settings_description" 
+						android:text="from the last package combo date"/>
+				</LinearLayout>
+			</RelativeLayout>
+		</LinearLayout>
 	
-	<LinearLayout
-		style="@style/settings_wrapper">
-		<TextView
-			style="@style/settings_title"
-			android:text="Display"/>
-		<RelativeLayout
-			style="@style/match_parent_width">
-			<LinearLayout
-					style="@style/settings_description_wrapper">
-				<TextView
-					style="@style/settings_description_title" 
-					android:text="Binary format"/>
-				<TextView
-					style="@style/settings_description" 
-					android:text="Set format as binary ( Gib )"/>
-			</LinearLayout>
-			<Switch
-				android:id="@+id/switch_binary_format"
-				style="@style/settings_button"/>
-		</RelativeLayout>
+		<LinearLayout
+			style="@style/settings_wrapper">
+			<TextView
+				style="@style/settings_title"
+				android:text="Display"/>
+			<RelativeLayout
+				style="@style/match_parent_width">
+				<LinearLayout
+						style="@style/settings_description_wrapper">
+					<TextView
+						style="@style/settings_description_title" 
+						android:text="Binary format"/>
+					<TextView
+						style="@style/settings_description" 
+						android:text="Set format as binary ( Gib )"/>
+				</LinearLayout>
+				<Switch
+					android:id="@+id/switch_binary_format"
+					style="@style/settings_button"/>
+			</RelativeLayout>
+		</LinearLayout>
+		
+		<LinearLayout
+			style="@style/settings_wrapper">
+			<TextView
+				style="@style/settings_title"
+				android:text="Debugging"/>
+			<RelativeLayout
+				style="@style/match_parent_width">
+				<LinearLayout
+						style="@style/settings_description_wrapper">
+					<TextView
+						style="@style/settings_description_title" 
+						android:text="Enable debug mode"/>
+					<TextView
+						style="@style/settings_description" 
+						android:text="Avoid sending requests"/>
+				</LinearLayout>
+				<Switch 
+					android:id="@+id/switch_debug_mode"
+					style="@style/settings_button"/>
+			</RelativeLayout>
+		</LinearLayout>
 	</LinearLayout>
-	
-	<LinearLayout
-		style="@style/settings_wrapper">
-		<TextView
-			style="@style/settings_title"
-			android:text="Debugging"/>
-		<RelativeLayout
-			style="@style/match_parent_width">
-			<LinearLayout
-					style="@style/settings_description_wrapper">
-				<TextView
-					style="@style/settings_description_title" 
-					android:text="Enable debug mode"/>
-				<TextView
-					style="@style/settings_description" 
-					android:text="Avoid sending requests"/>
-			</LinearLayout>
-			<Switch 
-				android:id="@+id/switch_debug_mode"
-				style="@style/settings_button"/>
-		</RelativeLayout>
-	</LinearLayout>
-</LinearLayout>
+</RelativeLayout>

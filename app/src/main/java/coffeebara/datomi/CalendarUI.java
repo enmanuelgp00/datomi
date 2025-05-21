@@ -23,11 +23,11 @@ class CalendarUI extends LinearLayout {
 	int selectedMonth = today.get( Calendar.MONTH );
 	int selectedYear = today.get( Calendar.YEAR );
 
-	CalendarUI ( Context context ) {
+	CalendarUI ( Context context, OnSubmit onSubmit ) {
 		super( context );
 		simpleMode = new SimpleMode( context );
 		detailMode = new DetailMode( context );
-		submit = new Submit( context );
+		submit = new Submit( context, onSubmit);
 		setOrientation( LinearLayout.VERTICAL );
 		setLayoutParams( matchParentWidth );
 		setGravity( Gravity.CENTER );
@@ -36,14 +36,16 @@ class CalendarUI extends LinearLayout {
 		addView( detailMode );
 		addView( submit );
 	}
-	public void setDate( Calendar date ) {
 
+	public interface OnSubmit {
+			public void onDone( Calendar date );
+			public void onCancel();
 	}
-	
+
 	class Submit extends GridLayout {
 		Button btnCancel;
 		Button btnDone;
-		Submit( Context context) {
+		Submit( Context context, OnSubmit onSubmit ) {
 			super(context);
 			setLayoutParams( matchParentWidth );
 			setPadding(0, 17, 0 , 0);
@@ -52,7 +54,20 @@ class CalendarUI extends LinearLayout {
 			btnCancel = new Button( context );
 			btnCancel.setGravity( Gravity.CENTER );
 			btnDone   = new Button( context );
+			btnDone.setOnClickListener( new View.OnClickListener() {
+				@Override
+				public void onClick( View view ) {
+					onSubmit.onDone( detailMode.getSelectedDate() );
+				}
+			} );
 			btnCancel.setText("Cancel");
+			btnCancel.setOnClickListener( new View.OnClickListener() {
+				@Override
+				public void onClick( View view ) {
+					(( ViewGroup )CalendarUI.this.getParent()).removeView( CalendarUI.this );
+					onSubmit.onCancel();
+				}
+			});
 			btnDone.setText("Done");
 			
 			LinearLayout cancelWrapper = new LinearLayout( context );
@@ -79,7 +94,7 @@ class CalendarUI extends LinearLayout {
 	class DetailMode extends LinearLayout {
 		Header header;
 		Almanac almanac;
-		
+
 		DetailMode ( Context context ) {
 			super( context );
 			header = new Header( context );
@@ -89,10 +104,10 @@ class CalendarUI extends LinearLayout {
 			addView( almanac );
 			
 		}
-		void setMonth( Calendar date ) {
-			
+		public Calendar getSelectedDate() {
+			return almanac.getSelectedDate();
 		}
-		class Header extends RelativeLayout {
+		private class Header extends RelativeLayout {
 			final int NEXT = 1;
 			final int PREV = 0;
 			TextView month;
@@ -172,18 +187,21 @@ class CalendarUI extends LinearLayout {
 				return wrapContent;
 			}
 		}
-		class Almanac extends GridLayout {
+		private class Almanac extends GridLayout {
 		
 			final float WEIGHT = 1f;
 			final int COLUMN = 7;
 			final int ROW = 7;
-			
+			Calendar originalDate = Calendar.getInstance();
+			Calendar selectedDate = Calendar.getInstance();
+			TextView prevDay;
 			Almanac ( Context context ) {
 				super( context );
+				prevDay = new TextView( context );
 				int count = 0;
 				setColumnCount( COLUMN );
 				setRowCount( ROW );
-
+				
 				setUseDefaultMargins(true); //
 				setLayoutParams( matchParentWidth );
 				setGravity( Gravity.CENTER );
@@ -202,6 +220,17 @@ class CalendarUI extends LinearLayout {
 					for ( int y = 0; y < COLUMN; y++ ) {
 						GridLayout.LayoutParams params = new GridLayout.LayoutParams( GridLayout.spec( x, WEIGHT ), GridLayout.spec( y, WEIGHT ) );
 						TextView day = new TextView( context );
+						day.setOnClickListener( new View.OnClickListener() {
+							@Override
+							public void onClick( View view ) {
+								if ( day.getText() != "" ) {
+									prevDay.setBackground( null );
+									prevDay = day;
+									selectedDate.set( Calendar.DAY_OF_MONTH, Integer.parseInt( day.getText().toString() ) );
+									day.setBackgroundColor( Color.parseColor( "#aaaa00" ) );
+								}
+							}
+						});
 						day.setGravity( Gravity.CENTER );
 						addView( day, params );
 					}
@@ -211,47 +240,27 @@ class CalendarUI extends LinearLayout {
 
 
 			}
-
+			Calendar getSelectedDate() {
+				return selectedDate;
+			}
 			void setFocusedDate( Calendar date ) {
 				for ( int i = 7; i < getChildCount(); i ++ ) {
 					(( TextView )getChildAt( i )).setText( "" );
 				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTimeInMillis( date.getTimeInMillis() );
-				calendar.set( Calendar.DAY_OF_MONTH, 1 );
-				int month = calendar.get( Calendar.MONTH );
-				int firstDayWeekDayName = calendar.get( Calendar.DAY_OF_WEEK );
+				selectedDate.setTimeInMillis( date.getTimeInMillis() );
+				selectedDate.set( Calendar.DAY_OF_MONTH, 1 );
+				
+				Calendar dateMap = Calendar.getInstance();
+				dateMap.setTimeInMillis( selectedDate.getTimeInMillis() );
+				int currentMonth = dateMap.get( Calendar.MONTH );
+				int firstDayWeekDayName = dateMap.get( Calendar.DAY_OF_WEEK );
 
-				while ( calendar.get( Calendar.MONTH ) == month ){
-					int day = calendar.get( Calendar.DAY_OF_MONTH );
-					TextView square = ( TextView ) getChildAt( day + ( COLUMN - 1 ) + firstDayWeekDayName - 1 );
-					square.setGravity( Gravity.CENTER );
-					square.setText( String.valueOf( day ) );
-					calendar.add( Calendar.DAY_OF_MONTH, 1 );
-				}
-			}
-
-			class CheckText extends CompoundButton {
-				CheckText( Context context ) {
-					super(context);
-					setOnClickListener( new View.OnClickListener() {
-						@Override
-						public void onClick( View view ) {
-							setChecked( isChecked() );
-						}
-					} );
-				}
-				public void setOnCheckedChangeListener( CompoundButton.OnCheckedChangeListener listener ){	
-					listener.onCheckedChanged( this, isChecked() );
-				};
-				@Override
-				public void setChecked( boolean bo) {
-					super.setChecked( bo );
-					if ( bo ) {
-						setBackgroundColor( Color.parseColor("#aaaa00") );
-					} else {
-						setBackground( null );
-					}
+				while ( dateMap.get( Calendar.MONTH ) == currentMonth ){
+					int day = dateMap.get( Calendar.DAY_OF_MONTH );
+					TextView tv = ( TextView ) getChildAt( day + ( COLUMN - 1 ) + firstDayWeekDayName - 1 );
+					tv.setGravity( Gravity.CENTER );
+					tv.setText( String.valueOf( day ) );
+					dateMap.add( Calendar.DAY_OF_MONTH, 1 );
 				}
 			}
 		} // Almanac
