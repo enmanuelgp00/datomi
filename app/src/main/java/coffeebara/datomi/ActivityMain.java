@@ -69,7 +69,7 @@ public class ActivityMain extends Activity {
 		setContentView(R.layout.activity_main);
 		mobileDataManager = new MobileDataManager(this);
 
-		handlePermissions();
+		//handlePermissions();
 		tv_collection = new TextView [] {
 			textViewDays = findViewById(R.id.tv_days), 
 			textViewDaysLabel = findViewById(R.id.tv_days_label),
@@ -252,18 +252,20 @@ public class ActivityMain extends Activity {
 			long dinamicBytes = initialBytes;
 			long dinamicUsed = totalUsed ;
 			long dinamicSuggestion = initialSuggestion;
-			
+			int flips = 0;
 			while ( dinamicUsed > dinamicSuggestion ) {
 				dinamicBytes -= dinamicSuggestion;
 				dinamicSuggestion = ( dinamicBytes ) / remainingDays ;
 				dinamicUsed = dinamicUsed - dinamicSuggestion ;
+				flips ++;
 			}
 			
 			int dinamicProgress = ( int ) (( double ) dinamicUsed / dinamicSuggestion  * BAR_SIZE );
 			String remainingBytesSuggestionStr = dataFormatter.format( dinamicSuggestion - dinamicUsed );
 			justification = dinamicProgress + remainingBytesSuggestionStr.length();
 
-			textViewDinamicSuggestion.setText( String.format("  %"+ ( justification > BAR_SIZE ? BAR_SIZE : justification ) +"s \n%s",
+			textViewDinamicSuggestion.setText( String.format("%2d%"+ ( justification > BAR_SIZE ? BAR_SIZE : justification ) +"s \n%s",
+				flips,
 				remainingBytesSuggestionStr,
 				retroBar( BAR_SIZE , dinamicProgress, '.', '#' )
 			));

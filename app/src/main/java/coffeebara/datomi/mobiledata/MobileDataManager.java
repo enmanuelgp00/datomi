@@ -144,18 +144,18 @@ public class MobileDataManager {
 		return logGlobal;
 	}
 
-//	Deadline
+//	Deadline packageCombo
 
 	public Calendar getDeadline() {
 		Calendar deadline = Calendar.getInstance();
-		deadline.setTimeInMillis(book.getLong("deadline", 0));
+		deadline.setTimeInMillis( book.getLong("deadline", 0 ));
 		return deadline;
 	}
 
 	public void setDeadline(Calendar date) {
-		this.deadline = date;
+		this.deadline = (Calendar) date.clone();
 		pen.putLong("deadline", date.getTimeInMillis());
-		pen.apply();
+		pen.commit();
 	}
 
 	private void checkDeadline( MobileData mobileData ) {
@@ -175,7 +175,18 @@ public class MobileDataManager {
 		long diffDaysMillis = pointedDayMillis - currentDayMillis;
 		return (int) (diffDaysMillis / (1000 * 60 * 60 * 24));
 	}
-
+	public void setPackageComboDate( Calendar date ) {
+		this.deadline = ( Calendar ) date.clone();
+		this.deadline.add( Calendar.DAY_OF_MONTH, 30 );
+		pen.putLong("deadline", deadline.getTimeInMillis()).apply();
+	}
+	
+	public Calendar getPackageComboDate() {
+		Calendar date = Calendar.getInstance();
+		date.setTimeInMillis( book.getLong( "deadline", 0l ) );
+		date.add( Calendar.DAY_OF_MONTH, -30 );
+		return date;
+	}
 //	Dataformat
 
 	public DataFormat currentDataFormat() {

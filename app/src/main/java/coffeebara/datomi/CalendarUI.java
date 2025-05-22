@@ -38,26 +38,27 @@ class CalendarUI extends LinearLayout {
 	}
 
 	public interface OnSubmit {
-			public void onDone( Calendar date );
-			public void onCancel();
+			public void onDone( View view, Calendar date );
+			public void onCancel( View view );
 	}
 
 	class Submit extends GridLayout {
-		Button btnCancel;
-		Button btnDone;
+		TextView btnCancel;
+		TextView btnDone;
 		Submit( Context context, OnSubmit onSubmit ) {
 			super(context);
 			setLayoutParams( matchParentWidth );
 			setPadding(0, 17, 0 , 0);
 			setColumnCount( 2 );
 			setRowCount( 1 );
-			btnCancel = new Button( context );
+			btnCancel = new TextView( context );
+			btnDone   = new TextView( context );
+
 			btnCancel.setGravity( Gravity.CENTER );
-			btnDone   = new Button( context );
 			btnDone.setOnClickListener( new View.OnClickListener() {
 				@Override
 				public void onClick( View view ) {
-					onSubmit.onDone( detailMode.getSelectedDate() );
+					onSubmit.onDone( CalendarUI.this , detailMode.getSelectedDate() );
 				}
 			} );
 			btnCancel.setText("Cancel");
@@ -65,21 +66,31 @@ class CalendarUI extends LinearLayout {
 				@Override
 				public void onClick( View view ) {
 					(( ViewGroup )CalendarUI.this.getParent()).removeView( CalendarUI.this );
-					onSubmit.onCancel();
+					onSubmit.onCancel( CalendarUI.this );
 				}
 			});
 			btnDone.setText("Done");
 			
-			LinearLayout cancelWrapper = new LinearLayout( context );
-			cancelWrapper.setGravity( Gravity.CENTER ); 			
+			LinearLayout cancelWrapper = new LinearLayout( context );			
 			cancelWrapper.addView( btnCancel ); 
 			
-			LinearLayout doneWrapper = new LinearLayout( context );             
-			doneWrapper.setGravity( Gravity.CENTER ); 
+			LinearLayout doneWrapper = new LinearLayout( context );          
 			doneWrapper.addView( btnDone );
 
-			addView(cancelWrapper, new GridLayout.LayoutParams( GridLayout.spec( 0 , 1f ), GridLayout.spec( 0, 1f )) );
-			addView(doneWrapper  , new GridLayout.LayoutParams( GridLayout.spec( 0 , 1f ), GridLayout.spec( 1, 1f )) );
+			doneWrapper.setGravity( Gravity.CENTER ); 
+			cancelWrapper.setGravity( Gravity.CENTER ); 
+
+			doneWrapper.setPadding( 0, 0, 0, 21 );
+			cancelWrapper.setPadding( 0, 0, 0, 21 );
+
+			GridLayout.LayoutParams doneParams = new GridLayout.LayoutParams( GridLayout.spec( 0 , 1f ), GridLayout.spec( 0, 1f ) );
+			GridLayout.LayoutParams cancelParams = new GridLayout.LayoutParams( GridLayout.spec( 0 , 1f ), GridLayout.spec( 1, 1f ) );
+			
+			doneParams.setGravity( Gravity.CENTER );
+			cancelParams.setGravity( Gravity.CENTER );
+
+			addView(cancelWrapper,  doneParams );
+			addView(doneWrapper  , cancelParams );   
 		}
 	}
 	class SimpleMode extends LinearLayout {
@@ -112,17 +123,21 @@ class CalendarUI extends LinearLayout {
 			final int PREV = 0;
 			TextView month;
 			TextView year;
+
 			Button prev;
 			Button next;
+
 			Calendar focusedDate = Calendar.getInstance();
 
 			Header( Context context ) {
 				super( context );
-				month = new TextView( context );
 				ViewGroup.MarginLayoutParams marginRight = new ViewGroup.MarginLayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT  );
 				marginRight.setMargins( 0, 0, 30, 0);
-				month.setLayoutParams( marginRight );
+
+				month = new TextView( context );
 				year = new TextView( context );
+
+				month.setLayoutParams( marginRight );
 
 				LinearLayout dateWrapper = new LinearLayout( context );
 				dateWrapper.addView( month );
@@ -136,6 +151,7 @@ class CalendarUI extends LinearLayout {
 
 				prev.setText( "<" );
 				next.setText( ">" );
+
 				prev.setLayoutParams( layout( RelativeLayout.ALIGN_PARENT_LEFT ) );
 				next.setLayoutParams( layout( RelativeLayout.ALIGN_PARENT_RIGHT ) );
 				prev.setOnClickListener( explore( PREV ) );
@@ -209,17 +225,18 @@ class CalendarUI extends LinearLayout {
 					Calendar cal = Calendar.getInstance();
 					for ( int i = 0; i < COLUMN; i++ ) {
 						cal.set( Calendar.DAY_OF_WEEK, i + 1 );
-						GridLayout.LayoutParams params = new GridLayout.LayoutParams( GridLayout.spec( 0, WEIGHT ), GridLayout.spec( i, WEIGHT ) );
-						TextView weekName = new TextView( context );
+						GridLayout.LayoutParams params = new GridLayout.LayoutParams( GridLayout.spec( 0, WEIGHT ), GridLayout.spec( i, WEIGHT ) );						TextView weekName = new TextView( context );
+						params.setGravity( Gravity.CENTER );
 						weekName.setText( new SimpleDateFormat("EE").format( cal.getTimeInMillis() ) );
-						weekName.setGravity( Gravity.CENTER );
-						addView( weekName, params );
+						//weekName.setLayoutParams( params );
+						addView( weekName ,params );
 					}
 				}
 				for ( int x = 1; x < ROW; x++ ) {
 					for ( int y = 0; y < COLUMN; y++ ) {
 						GridLayout.LayoutParams params = new GridLayout.LayoutParams( GridLayout.spec( x, WEIGHT ), GridLayout.spec( y, WEIGHT ) );
 						TextView day = new TextView( context );
+						//day.setLayoutParams( new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT ) );
 						day.setOnClickListener( new View.OnClickListener() {
 							@Override
 							public void onClick( View view ) {
@@ -231,8 +248,10 @@ class CalendarUI extends LinearLayout {
 								}
 							}
 						});
-						day.setGravity( Gravity.CENTER );
-						addView( day, params );
+
+						params.setGravity( Gravity.FILL );
+						day.setLayoutParams( params );
+						addView( day );
 					}
 				}
 

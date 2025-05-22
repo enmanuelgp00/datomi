@@ -51,7 +51,8 @@
 
 				<TextView 
 					android:id="@+id/tv_deadline"
-					style="@style/retro_bar"/>
+					style="@style/retro_bar"
+					/>
 				<TextView
 					android:id="@+id/tv_total_data"					
 					style="@style/retro_bar"/>
@@ -98,7 +99,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBottom="@id/nav_bar"
-		android:layout_marginBottom="34dp"
+		android:layout_marginBottom="14dp"
 		android:layout_centerInParent="true"
 		android:gravity="center">
 		<Button
@@ -106,7 +107,7 @@
 			android:background="@drawable/oval_selector"
 			android:layout_width="62dp"
 			android:layout_height="62dp"
-			android:layout_margin="@dimen/dp_1"
+			android:layout_margin="9dp"
 			android:stateListAnimator="@null"
 			android:elevation="4dp"
 			android:padding="0dp"

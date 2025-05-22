@@ -3,7 +3,7 @@
     <item
         android:id="@+id/menu_options"
         android:fontFamily="monospace"
-        android:title="Options" />
+        android:title="Settings" />
     <item
         android:id="@+id/menu_history"
         android:fontFamily="monospace"

@@ -18,14 +18,15 @@
 					style="@style/settings_description_wrapper">
 					<TextView
 						style="@style/settings_description_title" 
-						android:text="Change deadline"/>	
+						android:text="Package combo date"/>	
 					<TextView
-						style="@style/settings_description" 
-						android:text="from the last package combo date"/>
+						style="@style/settings_description"
+						android:id="@+id/package_combo"
+						android:text="Say 02 May 2020"/>	
 				</LinearLayout>
 			</RelativeLayout>
 		</LinearLayout>
-	
+
 		<LinearLayout
 			style="@style/settings_wrapper">
 			<TextView

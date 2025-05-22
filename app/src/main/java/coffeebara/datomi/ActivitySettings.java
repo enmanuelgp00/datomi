@@ -18,7 +18,6 @@ import java.util.Calendar;
 
 public class ActivitySettings extends Activity {
 	private CalendarUI calendarUI;
-	private EditText editTextDeadline; 
 	private MobileDataManager mobileDataManager;
 	private SimpleDateFormat dateFormatter;
 	private DataFormat dataFormat;
@@ -27,6 +26,7 @@ public class ActivitySettings extends Activity {
 		switchDebugMode;
 	private ViewGroup deadlineWrapper;
 	private boolean isCalendarDisplayed = false ;
+	private TextView packageCombo;
 
 	public void onCreate(Bundle savedState) {
 		super.onCreate( savedState );
@@ -38,17 +38,19 @@ public class ActivitySettings extends Activity {
 		dataFormat = mobileDataManager.currentDataFormat();
 
 		deadlineWrapper = findViewById( R.id.deadline_wrapper );
+		packageCombo = findViewById( R.id.package_combo );
+		packageCombo.setText( new SimpleDateFormat( "EE dd MMMM yyyy" ).format( mobileDataManager.getPackageComboDate().getTime() ) );
 		switchBinaryFormat = findViewById( R.id.switch_binary_format );				
 		switchDebugMode = findViewById( R.id.switch_debug_mode );
 		calendarUI = new CalendarUI( this , new CalendarUI.OnSubmit() {
 			@Override
-			public void onDone( Calendar date ) {
-				Calendar deadline = ( Calendar ) date.clone();
-				deadline.add( Calendar.DAY_OF_MONTH, 30 );
-				mobileDataManager.setDeadline( deadline );
-				Toast.makeText( ActivitySettings.this, new SimpleDateFormat("EE dd MMMM yyyy").format( deadline.getTimeInMillis() ), Toast.LENGTH_SHORT ).show();
+			public void onDone( View view, Calendar date ) {
+				mobileDataManager.setPackageComboDate( date );
+				packageCombo.setText( new SimpleDateFormat( "EE dd MMMM yyyy" ).format( mobileDataManager.getPackageComboDate().getTime() ) );
+				Toast.makeText( ActivitySettings.this, new SimpleDateFormat("EE dd MMMM yyyy").format( date.getTimeInMillis() ), Toast.LENGTH_SHORT ).show();
+				((ViewGroup)view.getParent()).removeView( view );
 			}
-			public void onCancel() {
+			public void onCancel( View view ) {
 				isCalendarDisplayed = false;
 			}
 		});
@@ -56,7 +58,7 @@ public class ActivitySettings extends Activity {
 		relativeParams.addRule( RelativeLayout.ALIGN_PARENT_BOTTOM );
 		calendarUI.setLayoutParams( relativeParams );
 		RelativeLayout absoluteParent = findViewById( R.id.main_wrapper );
-		calendarUI.setBackgroundColor( Color.parseColor( "#fdfdfd" ) );
+		calendarUI.setBackgroundColor( Color.parseColor( "#122220" ) );
 
 		deadlineWrapper.setOnClickListener( new View.OnClickListener() {
 			@Override
