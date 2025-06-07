@@ -27,7 +27,6 @@ public class MobileDataManager {
 	SharedPreferences.Editor pen;
 	TelephonyManager telephonyManager;
 	TreeSet<String> responseHistory;
-	Calendar deadline;
 	MobileData todayFirstMobileData, currentMobileData;
 	TreeSet<String> logOfKeys, logOfToday;
 	String keyLogOfToday;
@@ -37,6 +36,7 @@ public class MobileDataManager {
 		final static String DATA_BYTES_USED = "dataBytesUsed";
 		final static String TRAFFIC_REFERENCE = "trafficReference";
 		final static String TRAFFIC_TOTAL = "trafficTotal";
+		final static String DEADLINE = "deadline";
 	}
 	public MobileDataManager(Context context) {
 		this.context = context;
@@ -52,7 +52,6 @@ public class MobileDataManager {
 		logOfToday = getLogOfToday(); 
 		todayFirstMobileData = getTodayFirstMobileData();
 		currentMobileData = todayFirstMobileData;
-		deadline = getDeadline();
 		if (logOfToday.size() > 0) {
 			currentMobileData = MobileData.parseStringFormat( logOfToday.last(), currentDataFormat() );
 		} else if (logOfKeys.size() > 0) {
@@ -148,43 +147,60 @@ public class MobileDataManager {
 
 	public Calendar getDeadline() {
 		Calendar deadline = Calendar.getInstance();
-		deadline.setTimeInMillis( book.getLong("deadline", 0 ));
+		deadline.setTimeInMillis( book.getLong( Key.DEADLINE , 0 ));
 		return deadline;
 	}
 
 	public void setDeadline(Calendar date) {
-		this.deadline = (Calendar) date.clone();
-		pen.putLong("deadline", date.getTimeInMillis());
+		Calendar deadline = (Calendar) date.clone();
+		pen.putLong( Key.DEADLINE , date.getTimeInMillis());
 		pen.commit();
 	}
-
+	
+	public void toZeroHour( Calendar date ) {  
+		date.set( Calendar.HOUR, 0 );
+		date.set( Calendar.MINUTE, 0 );
+		date.set( Calendar.SECOND, 0 );    	
+	}
+	
 	private void checkDeadline( MobileData mobileData ) {
 		if ( mobileData.getSmsBonus() > currentMobileData.getSmsBonus()) {
-			Calendar newDeadline = Calendar.getInstance();
-			newDeadline.setTime( mobileData.getCalendarDate().getTime());
-			newDeadline.add( Calendar.DAY_OF_MONTH, 30 );
-			setDeadline( newDeadline );
+			setPackageComboDate( Calendar.getInstance() );			
 			Toast.makeText(context, "New deadline established", Toast.LENGTH_LONG).show();
 		}
 		currentMobileData = mobileData;
 	}
 
 	public int getDaysTillDeadline() {
-		long pointedDayMillis = getDeadline().getTimeInMillis();
-		long currentDayMillis = currentMobileData.getCalendarDate().getTimeInMillis();
-		long diffDaysMillis = pointedDayMillis - currentDayMillis;
-		return (int) (diffDaysMillis / (1000 * 60 * 60 * 24));
+		int days = 0;
+		
+		Calendar iterator = Calendar.getInstance();
+		Calendar deadline = getDeadline();
+		
+		while ( 
+			iterator.get( Calendar.MONTH ) != deadline.get( Calendar.MONTH )
+			|| iterator.get( Calendar.DAY_OF_MONTH ) != deadline.get( Calendar.DAY_OF_MONTH )  )
+			{
+			days ++;
+			iterator.add( Calendar.DAY_OF_MONTH, 1 );
+		}
+		/*
+		long asDay = 1000 * 60 * 60 * 24;
+		Calendar currentDate = Calendar.getInstance();
+		int currentDateDays = (int) ( currentMobileData.getCalendarDate().getTimeInMillis() / asDay );
+		int deadlineDays = (int) ( getDeadline().getTimeInMillis() / asDay ) ;
+		*/
+		return days;
 	}
 	public void setPackageComboDate( Calendar date ) {
-		this.deadline = ( Calendar ) date.clone();
-		this.deadline.add( Calendar.DAY_OF_MONTH, 30 );
-		pen.putLong("deadline", deadline.getTimeInMillis()).apply();
+		Calendar deadline = ( Calendar ) date.clone();
+		deadline.add( Calendar.DAY_OF_MONTH, 30 );
+		setDeadline( deadline );
 	}
 	
 	public Calendar getPackageComboDate() {
-		Calendar date = Calendar.getInstance();
-		date.setTimeInMillis( book.getLong( "deadline", 0l ) );
-		date.add( Calendar.DAY_OF_MONTH, -30 );
+		Calendar date = ( Calendar ) getDeadline().clone(); 
+		date.add( Calendar.DAY_OF_MONTH, -30 );		
 		return date;
 	}
 //	Dataformat

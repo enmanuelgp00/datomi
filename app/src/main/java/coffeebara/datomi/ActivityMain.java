@@ -48,11 +48,14 @@ import java.util.Set;
 public class ActivityMain extends Activity {
 	
 	MobileDataManager mobileDataManager;
-	TextView textViewDeadline,
-		textViewDays,
-		textViewDinamicSuggestion,
-		textViewTotalData,
-		textViewDaysLabel,
+	TextView
+		tvDeadline,
+		tvBytesUsed,
+		tvInitialBytes,
+		tvDays,
+		tvDinamicSuggestion,
+		tvTotalData,
+		tvDaysLabel,
 		tvDataSent,
 		tvDataReceived;
 		
@@ -71,25 +74,27 @@ public class ActivityMain extends Activity {
 
 		//handlePermissions();
 		tv_collection = new TextView [] {
-			textViewDays = findViewById(R.id.tv_days), 
-			textViewDaysLabel = findViewById(R.id.tv_days_label),
-			textViewDeadline = findViewById(R.id.tv_deadline),
-			textViewTotalData = findViewById(R.id.tv_total_data),
-			textViewDinamicSuggestion = findViewById( R.id.tv_dinamic_suggestion ),
+			tvDeadline = findViewById( R.id.deadline ),
+			tvDays = findViewById( R.id.tv_days ), 
+			tvDaysLabel = findViewById( R.id.tv_days_label ),
+			tvTotalData = findViewById( R.id.tv_total_data ),  
+			tvBytesUsed = findViewById( R.id.bytes_used ),
+			tvInitialBytes = findViewById( R.id.initial_bytes ),
+			tvDinamicSuggestion = findViewById( R.id.tv_dinamic_suggestion ),
 			tvDataSent = findViewById( R.id.tv_data_sent ),
 			tvDataReceived = findViewById( R.id.tv_data_received )
 		};
 		
 		/*
 		//new TextView( this );
-		textViewDinamicSuggestion.setLayoutParams( new LinearLayout.LayoutParams(
+		tvDinamicSuggestion.setLayoutParams( new LinearLayout.LayoutParams(
 			LinearLayout.LayoutParams.WRAP_CONTENT,
 			LinearLayout.LayoutParams.WRAP_CONTENT )
 		);
-		textViewDinamicSuggestion.setTypeface( Typeface.MONOSPACE ); // fontFamily
-		textViewDinamicSuggestion.setTextColor( Color.parseColor("#ffffff") );
-		textViewDinamicSuggestion.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 15);
-		((LinearLayout) textViewTotalData.getParent()) .addView( textViewDinamicSuggestion );
+		tvDinamicSuggestion.setTypeface( Typeface.MONOSPACE ); // fontFamily
+		tvDinamicSuggestion.setTextColor( Color.parseColor("#ffffff") );
+		tvDinamicSuggestion.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 15);
+		((LinearLayout) tvTotalData.getParent()) .addView( tvDinamicSuggestion );
 		*/
 
 		btnCheck = findViewById(R.id.btn_check);
@@ -119,7 +124,7 @@ public class ActivityMain extends Activity {
 		});
 		*/
 		
-		refresh();
+		//refresh();
 	}
 	void refresh() {
 		
@@ -171,7 +176,7 @@ public class ActivityMain extends Activity {
 		return new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				final String loadingMessage = " ... ";
+				final String loadingMessage = ".";
 				mobileDataManager.update();
 				CharSequence btnCheckText = btnCheck.getText();
 				btnCheck.setEnabled(false);
@@ -206,7 +211,7 @@ public class ActivityMain extends Activity {
 		if (mobileDataManager.getLogOfToday().size() > 0) {
 			
 			StringBuilder log = new StringBuilder();
-			SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("dd MMMM");
+			SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("MMMM dd");
 			//SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE dd MMMM YYYY");
 			DataFormat dataFormatter = mobileDataManager.currentDataFormat();
 			/*
@@ -223,27 +228,22 @@ public class ActivityMain extends Activity {
 			long remainingBytes =  mobileDataManager.getTodayCurrentMobileData().getDataBytes() - mobileDataManager.getDataBytesOffset();
 			long initialBytes = mobileDataManager.getTodayLargerMobileData().getDataBytes();
 
-			int barProgress = (int) ( (double) totalUsed / initialSuggestion * BAR_SIZE );
 			int remainingDays = mobileDataManager.getDaysTillDeadline();
 
-
-			textViewDays.setText(String.format("%d", remainingDays));
-			textViewDaysLabel.setText( remainingDays > 1 ? "days" : "day" );
-
-			int progressDays = BAR_SIZE - remainingDays;
-
-			textViewDeadline.setText(String.format("  %"+ ( BAR_SIZE ) +"s\n  %" + ( progressDays == 0 ? "" : progressDays ) + "d\n%s",
-				simpleDateFormatter.format( mobileDataManager.getDeadline().getTime() ),
-				progressDays,
-				retroBar( BAR_SIZE, BAR_SIZE - remainingDays, '#', '.')
-			));
+			tvInitialBytes.setText( String.format("%11s", dataFormatter.format( initialBytes ) ));
+			tvBytesUsed.setText( dataFormatter.format( totalUsed ) );
 			
-			
+			tvDays.setText(String.format("%d", remainingDays));
+			String deadline = simpleDateFormatter.format( mobileDataManager.getDeadline().getTime() );
+			tvDeadline.setText( "(" + deadline + ")" );
+			tvDaysLabel.setText( remainingDays > 1 ? "days" : "day" );
+
+						
 			int progressTillCero = BAR_SIZE - (int)( (float) remainingBytes / initialBytes * BAR_SIZE );
 			String remainingBytesStr = dataFormatter.format( remainingBytes );
 			int justification = progressTillCero + remainingBytesStr.length();
 
-			textViewTotalData.setText( String.format("  %" + ( justification > BAR_SIZE ? BAR_SIZE : justification ) + "s\n%s" ,
+			tvTotalData.setText( String.format("  %" + ( justification > BAR_SIZE ? BAR_SIZE : justification ) + "s\n%s" ,
 				remainingBytesStr,
 				retroBar( BAR_SIZE,  progressTillCero, '.', '#')
 				)
@@ -252,20 +252,17 @@ public class ActivityMain extends Activity {
 			long dinamicBytes = initialBytes;
 			long dinamicUsed = totalUsed ;
 			long dinamicSuggestion = initialSuggestion;
-			int flips = 0;
 			while ( dinamicUsed > dinamicSuggestion ) {
 				dinamicBytes -= dinamicSuggestion;
 				dinamicSuggestion = ( dinamicBytes ) / remainingDays ;
 				dinamicUsed = dinamicUsed - dinamicSuggestion ;
-				flips ++;
 			}
 			
 			int dinamicProgress = ( int ) (( double ) dinamicUsed / dinamicSuggestion  * BAR_SIZE );
 			String remainingBytesSuggestionStr = dataFormatter.format( dinamicSuggestion - dinamicUsed );
 			justification = dinamicProgress + remainingBytesSuggestionStr.length();
 
-			textViewDinamicSuggestion.setText( String.format("%2d%"+ ( justification > BAR_SIZE ? BAR_SIZE : justification ) +"s \n%s",
-				flips,
+			tvDinamicSuggestion.setText( String.format("  %"+ ( justification > BAR_SIZE ? BAR_SIZE : justification ) +"s \n%s",
 				remainingBytesSuggestionStr,
 				retroBar( BAR_SIZE , dinamicProgress, '.', '#' )
 			));
@@ -277,7 +274,7 @@ public class ActivityMain extends Activity {
 			for ( TextView tv : tv_collection ) {
 				tv.setText("");
 			}
-			textViewTotalData.setText("Press the button [ " + btnCheck.getText() + " ] to record data");
+			tvTotalData.setText("Press the button [ " + btnCheck.getText() + " ] to record data");
 		}
 	}
 	
@@ -303,11 +300,11 @@ public class ActivityMain extends Activity {
 	
 	String retroBar ( int length, int progress, char progressChar, char freeSpaceChar ) {
 		StringBuilder bar = new StringBuilder();
-		String errorMessage = " ( fail ) ";
+		String errorMessage = " ( error ) ";
 		int freeSpace = length - progress ;
 		bar.append("[ ");
 
-		if ( progress >= length ) {
+		if ( -1 < progress && progress >= length ) {
 			progressChar = ':';
 			int spaceAside = ( length - errorMessage.length() ) / 2 ;
 			StringBuilder aside = new StringBuilder();

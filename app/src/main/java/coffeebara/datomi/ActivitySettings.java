@@ -42,20 +42,25 @@ public class ActivitySettings extends Activity {
 		packageCombo.setText( new SimpleDateFormat( "EE dd MMMM yyyy" ).format( mobileDataManager.getPackageComboDate().getTime() ) );
 		switchBinaryFormat = findViewById( R.id.switch_binary_format );				
 		switchDebugMode = findViewById( R.id.switch_debug_mode );
+		
 		calendarUI = new CalendarUI( this , new CalendarUI.OnSubmit() {
 			@Override
 			public void onDone( View view, Calendar date ) {
 				mobileDataManager.setPackageComboDate( date );
+				
 				packageCombo.setText( new SimpleDateFormat( "EE dd MMMM yyyy" ).format( mobileDataManager.getPackageComboDate().getTime() ) );
 				Toast.makeText( ActivitySettings.this, new SimpleDateFormat("EE dd MMMM yyyy").format( date.getTimeInMillis() ), Toast.LENGTH_SHORT ).show();
 				((ViewGroup)view.getParent()).removeView( view );
+				isCalendarDisplayed = false;
 			}
 			public void onCancel( View view ) {
 				isCalendarDisplayed = false;
 			}
 		});
+		
 		RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams( RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT );
 		relativeParams.addRule( RelativeLayout.ALIGN_PARENT_BOTTOM );
+		(( RelativeLayout.MarginLayoutParams )relativeParams ).setMargins( 7, 7, 7, 7 );
 		calendarUI.setLayoutParams( relativeParams );
 		RelativeLayout absoluteParent = findViewById( R.id.main_wrapper );
 		calendarUI.setBackgroundColor( Color.parseColor( "#122220" ) );

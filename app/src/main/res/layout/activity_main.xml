@@ -24,35 +24,76 @@
 			android:gravity="center"
 			android:orientation="vertical"
 			android:layout_margin="@dimen/dp_1">
-
+			<!-- days -->
 			<LinearLayout			
 				android:padding="24dp"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
+				android:layout_height="wrap_content"
+				android:gravity="bottom">
 				<TextView 
 					android:id="@+id/tv_days"
 					style="@style/common_text"
+					android:includeFontPadding="false"
+					android:lineSpacingExtra="0dp"
+					android:padding="0dp"
+					android:layout_marginBottom="-5dp"
 					android:fontFamily="serif"
 					android:textStyle="bold"
 					android:textSize="@dimen/big_text"/>
-				<TextView
-					style="@style/common_text"
-					android:id="@+id/tv_days_label"
-					android:layout_marginLeft="@dimen/dp_1"/>
+				<GridLayout
+					style="@style/wrap_content"
+					android:layout_marginLeft="7dp"
+					android:columnCount="1"
+					android:rowCount="2">   
+					<TextView
+						style="@style/grid_item"
+						android:textSize="13dp"
+						android:id="@+id/tv_days_label"
+						android:layout_column="0"
+						android:layout_row="0"
+						android:gravity="left"/>
+					<TextView
+						style="@style/grid_item"
+						android:id="@+id/deadline"
+						android:layout_column="0"
+						android:layout_row="1"/>
+				</GridLayout>
 			</LinearLayout>
 			
 			
 			<!-- bar system information -->		
 			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				style="@style/wrap_content"
 				android:orientation="vertical"
-				android:gravity="center">
-
-				<TextView 
-					android:id="@+id/tv_deadline"
-					style="@style/retro_bar"
-					/>
+				android:gravity="right">
+				<GridLayout
+					style="@style/info_component"
+					android:columnCount="2"
+					android:rowCount="2"
+					android:useDefaultMargins="true">					
+					<TextView 
+						style="@style/grid_item"
+						android:layout_row="0"
+						android:layout_column="0"
+						android:text="used :"/>
+					<TextView 
+						style="@style/grid_item"
+						android:id="@+id/bytes_used"
+						android:layout_row="0"
+						android:layout_column="1"
+						android:text="2.34 Gb"/>
+					<TextView 
+						style="@style/grid_item"
+						android:layout_row="1"
+						android:layout_column="0"
+						android:text="init :"/>
+					<TextView 
+						style="@style/grid_item"
+						android:id="@+id/initial_bytes"
+						android:layout_row="1"
+						android:layout_column="1"
+						android:text="17.1 Gb"/>
+				</GridLayout>
 				<TextView
 					android:id="@+id/tv_total_data"					
 					style="@style/retro_bar"/>
@@ -64,7 +105,7 @@
 				<!-- current sent and received data  -->
 				<LinearLayout
 					style="@style/match_parent_width"
-					android:gravity="right">
+					android:gravity="left">
 					<TextView
 						style="@style/common_text"
 						android:id="@+id/tv_data_received"
